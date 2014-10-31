@@ -16,7 +16,8 @@
         NS = exports;
 
     } else {
-        NS = window;
+        //Add to Visionscapers namespace
+        NS = window["__VI__"] || window;
     }
 
     //Using this to set the Logger static props
