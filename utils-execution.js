@@ -18,7 +18,7 @@
     //using underscore.js _ as base object
     //changing and augmenting it where we want to
 
-    NS.extendWithExecutionUtils = function(utils, log) {
+    NS.extendWithUtils = function(utils, log) {
 
         if (typeof(log) != "object") {
             console.warn("UtilsExecution : no logging object provided, using browser console logger");

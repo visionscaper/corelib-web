@@ -21,7 +21,7 @@
     }
 
     //Using this to set the Logger static props
-    NS.LoggerLevel = {
+    NS.LoggingLevel = {
         NO_LOGGING    : 100,
         ERROR         : 4,
         WARN          : 3,
@@ -32,14 +32,14 @@
     NS.Logger = Class({
 
         $statics        : {
-            noLogging       : NS.LoggerLevel.NO_LOGGING,
-            errorLevel      : NS.LoggerLevel.ERROR,
-            warnLevel       : NS.LoggerLevel.WARN,
-            infoLevel       : NS.LoggerLevel.INFO,
-            debugLevel      : NS.LoggerLevel.DEBUG
+            noLogging       : NS.LoggingLevel.NO_LOGGING,
+            errorLevel      : NS.LoggingLevel.ERROR,
+            warnLevel       : NS.LoggingLevel.WARN,
+            infoLevel       : NS.LoggingLevel.INFO,
+            debugLevel      : NS.LoggingLevel.DEBUG
         },
 
-        _logLevel       : NS.LoggerLevel.WARN,
+        _logLevel       : NS.LoggingLevel.WARN,
 
         // See _setLogLevelNames
         _levelNames         : {},
@@ -61,12 +61,12 @@
 
             if (!_u.def(level)) {
                 console.log("{0} : no logging level given, setting log-level to warn".fmt(me));
-                level = NS.LoggerLevel.WARN;
+                level = NS.LoggingLevel.WARN;
             }
 
             if (!_u.def(this._logFunc[level])) {
                 console.log("{0} : level {1} unknown, setting log-level to warn".fmt(me, level));
-                level = NS.LoggerLevel.WARN;
+                level = NS.LoggingLevel.WARN;
             }
 
             this._logLevel = level;
@@ -261,11 +261,16 @@
                 preFix += me + " : "
             }
 
-            message = preFix + message;
-            message = this._preProcessLogText(level, message);
-
             var logArgs = Array.prototype.slice.call(arguments, 3);
-            logArgs.unshift(message);
+            if (!_u.object(message)) {
+                message = preFix + message;
+                message = this._preProcessLogText(level, message);
+
+                logArgs.unshift(message);
+            } else {
+                logArgs.unshift(message);
+                logArgs.unshift(preFix);
+            }
 
             var logFunc = _u.ensureFunc(this._logFunc[level]);
             logFunc.apply(console, logArgs);
@@ -289,6 +294,10 @@
     NS.Logger.utils = {
         def : function(v) {
             return ((v !== null) && (v !== undefined));
+        },
+
+        object : function(o) {
+            return (typeof(o) === "object");
         },
 
         string : function(s) {

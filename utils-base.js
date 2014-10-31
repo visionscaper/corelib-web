@@ -18,7 +18,7 @@
     //using underscore.js _ as base object
     //changing and augmenting it where we want to
 
-    NS.extendWithBaseUtils = function (utils, log) {
+    NS.extendWithUtils = function (utils, log) {
 
         if (typeof(log) != "object") {
             console.warn("UtilsBase : no logging object provided, using browser console logger");
@@ -228,6 +228,21 @@
 
             return success;
         };
+
+        _mustNOTexist("stringify");
+        utils.stringify = utils.stringify || function(obj) {
+            var me  = "Utils::stringify";
+
+            var s   = null;
+            try {
+                s = JSON.stringify(obj);
+            } catch(e) {
+                log.error(me, "Unable to stringify object : ", utils.get(e, "message"));
+                s = "[Unable to stringify object]";
+            }
+
+            return s;
+        }
     };
 
 })();
