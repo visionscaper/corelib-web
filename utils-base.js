@@ -40,7 +40,7 @@
         };
         var _mustExist = function (name) {
             if ((utils[name] === null) || (utils[name] === undefined)) {
-                log.warn("UtilsBase", "property or method {0} does not exists, will not be available".fmt(name));
+                log.error("UtilsBase", "property or method {0} does not exists, will not be available".fmt(name));
             }
         };
 

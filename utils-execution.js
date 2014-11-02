@@ -70,7 +70,7 @@
         };
         utils.hasMethod = utils.hasMethod || hasMethod;
 
-        utils._mustNOTexist("adheresToInterface");
+        utils._mustNOTexist("interfaceAdheres");
         /**
          *
          * Checks if object obj adheres to interface defined by interfaceDef
@@ -86,7 +86,7 @@
          *                                          When it is empty or null, no logging is performed
          *
          */
-        var adheresToInterface = function (obj, interfaceDef, description) {
+        var interfaceAdheres = function (obj, interfaceDef, description) {
             var me = "Utils::adheresToInterface";
             var adheres = false;
 
@@ -115,7 +115,8 @@
 
             var methodName = null;
             var hasMethod = false;
-            for (var idx in interfaceDef.methods) {
+            var idx = 0;
+            for (idx in interfaceDef.methods) {
 
                 methodName = interfaceDef.methods[idx];
                 hasMethod = utils.func(obj[methodName]);
@@ -134,7 +135,7 @@
             var propName = null;
             var prop = null;
             var hasProp = false;
-            for (var idx in interfaceDef.properties) {
+            for (idx in interfaceDef.properties) {
 
                 propName = interfaceDef.properties[idx];
                 prop = obj[propName];
@@ -153,7 +154,292 @@
 
             return adheres;
         };
-        utils.adheresToInterface = utils.adheresToInterface || adheresToInterface;
+
+        utils.interfaceAdheres = utils.interfaceAdheres || interfaceAdheres;
+
+        utils._mustNOTexist("execInSeries");
+        /**
+         *
+         * Executes all functions in funcHash in series and returns when all functions have called back.
+         *
+         * @param {object} funcHash                 ... hash object of functions to execute in series:
+         *                                              {
+         *                                                  'funcName1' : func1(cbReady),
+         *                                                  'funcName2' : func2(dataIn, errIn, cbReady),
+         *                                                  ...
+         *                                                  'funcNameN' : funcN(dataIn, errIn, cbReady)
+         *                                              }
+         *
+         *                                              dataIn, errIn are the data and error information provided by the
+         *                                              previously called function.
+         *
+         *                                              Every func1...N calls cbReady(dataOut, errOut)
+         *                                              If no error, err is undefined or null
+         *
+         * @param {function} allCallsCompletedCb    ... function(data, err) Calls this function if all functions are ready
+         *                                              or when forceComplete=false and any function calls cbReady with
+         *                                              error
+         *
+         * @param {boolean} [forceComplete = false] ... If true the function waits until every function has called their
+         *                                              cbReady func, even if one or more functions called cbReady
+         *                                              with error
+         *
+         * Example:
+         *
+         * var funcHash = {
+         *  'add A' : function(cbReady) {
+         *              var data = {};
+         *              data.A = 'A';
+         *
+         *              cbReady(data, null); //No error
+         *            },
+         *
+         *  'add B' : function(dataIn, errIn, cbReady) {
+         *              dataIn.B = 'B';
+         *
+         *              cbReady(dataIn, errIn);
+         *            }
+         *  }
+         *
+         *  _.execInSeries(funcHash, function(data, err) {
+         *
+         *      console.log("Created data structure : ", data);
+         *
+         *  }
+         *
+         */
+        var execInSeries = function (funcHash, allCallsCompletedCb, forceComplete) {
+            var me = "Utils::execInSeries";
+
+            allCallsCompletedCb = utils.ensureFunc(allCallsCompletedCb);
+
+            if (!utils.obj(funcHash)) {
+                log.warn(me, "No function hash given, calling allCallsCompletedCb callback function");
+
+                allCallsCompletedCb(null, null);
+
+                return;
+            }
+
+            if (!utils.bool(forceComplete)) {
+                forceComplete = false;
+            }
+
+            var funcIdx         = -1;
+
+            /**
+             *
+             * IMPORTANT : THIS ENSURES THAT THE FUNCTIONS ARE EXECUTED IN THE ORDER GIVEN
+             *
+             */
+            var funcNameList    = [];
+            for (var funcName in funcHash) {
+                funcNameList.push(funcName);
+            }
+            /**
+             *
+             * END IMPORTANT
+             *
+             */
+
+            var numFuncs        = funcNameList.length;
+
+            var __funcReady     = function (dataIn, errIn) {
+                var _errIn = errIn;
+
+                if (utils.def(errIn)) {
+                    _errIn = {
+                        message: 'function [' + funcNameList[funcIdx] + '] reported an error',
+                        originalError: errIn
+                    };
+
+                    if (!forceComplete) {
+                        allCallsCompletedCb(dataIn, _errIn);
+                        return;
+                    } else {
+                        log.warn(me, '{0}. Continuing despite error ...'.fmt(_errIn.message));
+                    }
+                }
+
+                __nextFunc(dataIn, _errIn);
+            };
+
+            var __nextFunc = function (dataIn, errIn) {
+                var _errIn = errIn;
+
+                funcIdx++;
+                if (funcIdx < numFuncs) {
+                    var nextFuncName = funcNameList[funcIdx];
+                    var nextFunc = funcHash[nextFuncName];
+                    if (utils.func(nextFunc)) {
+                        log.debug(me, "Executing [{0}]".fmt(nextFuncName));
+
+                        if (funcIdx < 1) {
+                            nextFunc(__funcReady);
+                        } else {
+                            nextFunc(dataIn, _errIn, __funcReady);
+                        }
+                    } else {
+                        _errIn = {
+                            message: 'Function hash entry [{0}] is not a function, ' +
+                            'unable execute'.fmt(nextFuncName)
+                        };
+
+                        if (utils.def(errIn)) {
+                            _errIn.originalError = errIn;
+                        }
+
+                        __funcReady(dataIn, _errIn);
+                    }
+                } else {
+                    allCallsCompletedCb(dataIn, _errIn);
+                }
+            };
+
+            __nextFunc();
+        };
+        utils.execInSeries = utils.execInSeries || execInSeries;
+
+        utils._mustNOTexist("execASync");
+        /**
+         *
+         * Executes all functions in funcHash ASYNChronously and calls
+         *  allCallsCompletedCb when all funcs have called back.
+         *
+         * @param {object} funcHash                 ... hash object of functions to execute asynchronously:
+         *                                              {
+         *                                                  'funcName1' : func1(cbReady),
+         *                                                  'funcName2' : func2(cbReady),
+         *                                                  ...
+         *                                                  'funcNameN' : funcN(cbReady)
+         *                                              }
+         *
+         *                                              every func1...N calls cbReady(err).
+         *                                              If no error err is undefined or null.
+         *
+         * @param {function} allCallsCompletedCb    ... function(errHash) This function is called when all functions called
+         *                                              their cbReady callback, or when forceComplete=false and any
+         *                                              function calls cbReady with error.
+         *
+         *                                              errHash is an object, providing for each function that resulted in
+         *                                              error an error object. Thus when 'funcName_i' resulted in error,
+         *                                              errHash['funcName_i']
+         *
+         * @param {boolean} [forceComplete = false] ... If true the function waits until every function has called their
+         *                                              cbReady func, even if one or more functions called cbReady with
+         *                                              error
+         *
+         * Example:
+         *
+         * var funcHash = {
+         *  'add A' : function(cbReady) {
+         *              var data = {};
+         *              data.A = 'A';
+         *
+         *              cbReady(data, null); //No error
+         *            },
+         *
+         *  'add B' : function(dataIn, errIn, cbReady) {
+         *              dataIn.B = 'B';
+         *
+         *              cbReady(dataIn, errIn(; //No error
+         *            }
+         *  }
+         *
+         *  _.execASync(funcHash, function(errHash) {
+         *
+         *      if (!_.empty(errHash)) {
+         *          for (funcName in errHash) {
+         *              console.error(funcName + " function resulted in error : ", errHash[funcName]);
+         *          }
+         *      }
+         *
+         *  }
+         *
+         */
+        utils.execASync = function (funcHash, allCallsCompletedCb, forceComplete) {
+            var me = "Utils::execASync";
+
+            allCallsCompletedCb = utils.ensureFunc(allCallsCompletedCb);
+
+            if (!utils.obj(funcHash)) {
+                log.info(me, "No function hash given, calling allCallsCompletedCb callback function");
+
+                allCallsCompletedCb(null, null);
+
+                return;
+            }
+
+            if (!utils.bool(forceComplete)) {
+                forceComplete = false;
+            }
+
+            var allReadyCbsCalled = false;
+
+            var funcReady   = {};
+            var funcErr     = {};
+            var funcReadyCb = {};
+
+            var funcName = null;
+
+            var __checkAllReady = function (funcName, err) {
+                if (!allReadyCbsCalled) {
+                    if (utils.def(err) && !forceComplete) {
+                        allCallsCompletedCb(funcErr);
+                        allReadyCbsCalled = true;
+                    } else {
+                        var allFuncsReady = true;
+                        for (funcName in funcHash) {
+                            allFuncsReady &= funcReady[funcName];
+
+                            if (!allFuncsReady) {
+                                break;
+                            }
+                        }
+
+                        if (allFuncsReady) {
+                            allCallsCompletedCb(funcErr);
+                            allReadyCbsCalled = true;
+                        }
+                    }
+                }
+            };
+
+            var __createFuncReadyCb = function (funcName) {
+                return function (err) {
+                    var _err = err;
+                    log.debug(me, "Executing [{0}] READY".fmt(funcName));
+
+                    if (utils.def(err)) {
+                        _err = {
+                            message: "[{0}] function reported ERROR".fmt(funcName),
+                            originalError: err
+                        };
+
+                        log.error(me, _err.message, _err.originalError);
+
+                        funcErr[funcName] = _err;
+                    }
+
+                    funcReady[funcName] = true;
+
+                    __checkAllReady(funcName, _err);
+                }
+            };
+
+            for (funcName in funcHash) {
+                funcReady[funcName] = false;
+                funcReadyCb[funcName] = __createFuncReadyCb(funcName);
+            }
+
+            // DO THE CALLS HERE
+            for (funcName in funcHash) {
+                var aFunc = funcHash[funcName];
+
+                aFunc(funcReadyCb[funcName]);
+            }
+        };
+        utils.execASync = utils.execASync || execASync;
 
     };
 
