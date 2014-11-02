@@ -148,7 +148,7 @@
             for (var idx = 0; idx < numProps; idx++) {
                 prop = props[idx];
 
-                if (_.obj(value)) {
+                if (utils.obj(value)) {
                     value = value[prop];
                 } else {
                     if (describe) {
@@ -202,7 +202,7 @@
             for (var idx = 0; idx < numProps; idx++) {
                 prop = props[idx];
 
-                if (_.obj(targetObj)) {
+                if (utils.obj(targetObj)) {
                     if (idx < numProps - 1) {
                         targetObj = targetObj[prop];
                     } else {
