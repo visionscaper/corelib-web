@@ -336,13 +336,13 @@
          *              var data = {};
          *              data.A = 'A';
          *
-         *              cbReady(data, null); //No error
+         *              cbReady(); //No error
          *            },
          *
-         *  'add B' : function(dataIn, errIn, cbReady) {
+         *  'add B' : function(cbReady) {
          *              dataIn.B = 'B';
          *
-         *              cbReady(dataIn, errIn(; //No error
+         *              cbReady(); //No error
          *            }
          *  }
          *
@@ -372,6 +372,14 @@
 
             if (!utils.bool(forceComplete)) {
                 forceComplete = false;
+            }
+
+            if (utils.empty(funcHash)) {
+                log.info(me, "Function hash empty, calling allCallsCompletedCb callback function");
+
+                allCallsCompletedCb(null, null);
+
+                return;
             }
 
             var allReadyCbsCalled = false;
