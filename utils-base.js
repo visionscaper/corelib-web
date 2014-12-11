@@ -107,9 +107,16 @@
         utils.empty = utils.empty || utils.isEmpty;
 
         _mustNOTexist("ensureFunc");
-        utils.ensureFunc = utils.ensureFunc || function (f) {
-            return (utils.func(f) ? f : function () {
-            });
+        utils.ensureFunc = utils.ensureFunc || function (f, funcName) {
+            var sureFunc = f;
+            if (!utils.func(sureFunc)) {
+                sureFunc = function() {};
+                if (utils.def(funcName)) {
+                    log.error("Utils::endureFunc : [{0}] is not a function, providing stand-in function".fmt(funcName));
+                }
+            }
+
+            return sureFunc;
         };
 
         _mustNOTexist("now");
@@ -119,21 +126,21 @@
 
         _mustNOTexist("get");
         utils.get = utils.get || function (obj, path, objName) {
-            var me = "Utils::get";
-            var value = null;
+            var me      = "Utils::get";
+            var value    = null;
 
             var describe = !utils.empty(objName);
 
             if (!utils.obj(obj)) {
                 if (describe) {
-                    log.error(me, "object {0} is invalid, can't get property {1}".fmt(objName, path));
+                    log.error(me, "object [{0}] is invalid, can't get property [{1}]".fmt(objName, path));
                 }
                 return value;
             }
 
             if (!utils.string(path) || utils.empty(path)) {
                 if (describe) {
-                    log.error(me, "path to property is invalid, can't get property of {0} object".fmt(objName));
+                    log.error(me, "path to property is invalid, can't get property of [{0}] object".fmt(objName));
                 }
                 return value;
             }
@@ -152,7 +159,7 @@
                     value = value[prop];
                 } else {
                     if (describe) {
-                        log.warn(me, "{0} of object {1} is not an object, unable to get property {2}".fmt(
+                        log.warn(me, "[{0}] of object [{1}] is not an object, unable to get property [{2}]".fmt(
                                 pathTravelled,
                                 objName,
                                 path
@@ -180,14 +187,14 @@
 
             if (!utils.obj(obj)) {
                 if (describe) {
-                    log.error(me, "object {0} is invalid, can't set property {1}".fmt(objName, path));
+                    log.error(me, "object [{0}] is invalid, can't set property [{1}]".fmt(objName, path));
                 }
                 return success;
             }
 
             if (!utils.string(path) || utils.empty(path)) {
                 if (describe) {
-                    log.error(me, "path to property is invalid, can't set property of {0} object".fmt(objName));
+                    log.error(me, "path to property is invalid, can't set property of [{0}] object".fmt(objName));
                 }
                 return success;
             }
@@ -211,7 +218,7 @@
                     }
                 } else {
                     if (describe) {
-                        log.warn(me, "{0} of object {1} is not an object, unable to set property {2}".fmt(
+                        log.warn(me, "[{0}] of object [{1}] is not an object, unable to set property [{2}]".fmt(
                                 pathTravelled,
                                 objName,
                                 path

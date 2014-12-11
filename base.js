@@ -32,4 +32,19 @@
 
     });
 
+    NS.NamedBase = Class(NS.Base, {
+
+        _name   : null,
+
+        constructor: function (name) {
+            NS.NamedBase.$super.call(this);
+
+            this._name = name || "[UNKNOWN]";
+        },
+
+        getName: function() {
+            return this._name || "[UNKNOWN]";
+        }
+    });
+
 })();

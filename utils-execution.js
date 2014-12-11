@@ -41,8 +41,8 @@
          *
          **************************************************/
 
-            //Different util components are registered here
-            //This allows us to check in a simple way if certain functionality is available
+        //Different util components are registered here
+        //This allows us to check in a simple way if certain functionality is available
         utils._mustExist("_utilsComponents");
         if (utils.obj(utils._utilsComponents)) {
             utils._utilsComponents["execution"] = true;
@@ -70,20 +70,62 @@
         };
         utils.hasMethod = utils.hasMethod || hasMethod;
 
+        utils._mustNOTexist("do");
+        /**
+         *
+         * Executes method with name methodName on obj with params paramList
+         *
+         * @param {Object} obj                  ... object on which to call method
+         * @param {String} methodName           ... name of method to call
+         * @param {Array|*} paramList           ... array of argument values, or single value when calling with
+         *                                          single argument, use [] to call without argument
+         *
+         * @param {String} [objectName=null]    ... When the objectName string is not empty (and not null) the
+         *                                          function will log messages (including the objectName) when
+         *                                          necessary. When it is empty or null, no logging is performed
+
+         *
+         * @returns {*}                         ... Return value of method call, when the call is not found the
+         *                                          return value is always undefined.
+         *
+         */
+        var doUtilFunc = function (obj, methodName, paramList, objectName) {
+            var me          = "Utils::adheresToInterface";
+            var returnVal   = undefined;
+
+            var doLog       = !utils.empty(objectName);
+
+            if (!utils.hasMethod(obj, methodName)) {
+                if (doLog) { log.warn(me, "[{0}] object has no method named {1}".fmt(objectName, methodName)); }
+
+                return returnVal;
+            }
+
+            if (utils.array(paramList)) {
+                returnVal = obj[methodName].apply(obj, paramList);
+            } else {
+                returnVal = obj[methodName].call(obj, paramList);
+            }
+
+            return returnVal;
+        };
+        utils.do = utils.do || doUtilFunc;
+
         utils._mustNOTexist("interfaceAdheres");
         /**
          *
          * Checks if object obj adheres to interface defined by interfaceDef
          *
-         * @param {Object} obj                  ... The object that is tested if it adheres to interface interfaceDef
+         * @param {Object} obj                          ... The object that is tested if it adheres to
+         *                                                  interface interfaceDef
          *
-         * @param {Object} interfaceDef         ... Object defining the interface that obj needs to have
-         * @param {Array} [interfaceDef.methods=[]]    ... Array with method names
-         * @param {Array} [interfaceDef.properties=[]] ... Array with property names
+         * @param {Object} interfaceDef                 ... Object defining the interface that obj needs to have
+         * @param {Array} [interfaceDef.methods=[]]     ... Array with method names
+         * @param {Array} [interfaceDef.properties=[]]  ... Array with property names
          *
-         * @param {String} [description=null]   ... When the description string not is empty (and not null) the function
-         *                                          will log messages (including the description) when necessary
-         *                                          When it is empty or null, no logging is performed
+         * @param {String} [description=null]           ... When the description string not is empty (and not null) the
+         *                                                  function will log messages (including the description) when
+         *                                                  necessary. When it is empty or null, no logging is performed
          *
          */
         var interfaceAdheres = function (obj, interfaceDef, description) {
@@ -98,7 +140,8 @@
 
             if (!utils.obj(interfaceDef)) {
                 if (doLog) {
-                    log.warn(me, "No valid interface definition given, unable to test interface adherence");
+                    log.warn(me, ("No valid interface definition given for {0}, " +
+                                  "unable to test interface adherence").fmt(description));
                 }
                 return adheres;
             }

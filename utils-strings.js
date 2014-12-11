@@ -85,12 +85,12 @@
                 return concatenated;
             }
 
-            var _join = function (path1, path2) {
+            var __join = function (path1, path2) {
                 path1 = path1 + "";
                 path2 = path2 + "";
 
-                var firstPathEndsWithSlash = (path1[path1.length - 1] == '/');
-                var secondPathStartsWithSlash = (path2[0] == '/');
+                var firstPathEndsWithSlash      = (path1[path1.length - 1] == '/');
+                var secondPathStartsWithSlash   = (path2[0] == '/');
 
                 if (!firstPathEndsWithSlash) {
                     path1 += '/';
@@ -107,7 +107,7 @@
             for (var idx = 1; idx < numPaths; idx++) {
                 nextPath = paths[idx];
 
-                concatenated = _join(concatenated, nextPath);
+                concatenated = __join(concatenated, nextPath);
             }
 
             return concatenated;
