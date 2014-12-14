@@ -7,7 +7,7 @@
 
     var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
     if (__isNode) {
-        require("./extensions/string.ext.js");
+        require("./../extensions/string.ext.js");
 
         NS = exports;
     } else {
@@ -17,8 +17,8 @@
 
     //using underscore.js _ as base object
     //changing and augmenting it where we want to
-
-    NS.extendWithUtils = function(utils, log) {
+    NS.UtilsExecution = {};
+    NS.UtilsExecution.addTo = function(utils, log) {
 
         if (typeof(log) != "object") {
             console.warn("UtilsExecution : no logging object provided, using browser console logger");
@@ -90,7 +90,7 @@
          *
          */
         var doUtilFunc = function (obj, methodName, paramList, objectName) {
-            var me          = "Utils::adheresToInterface";
+            var me          = "Utils::do";
             var returnVal   = undefined;
 
             var doLog       = !utils.empty(objectName);

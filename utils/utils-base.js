@@ -7,7 +7,7 @@
 
     var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
     if (__isNode) {
-        require("./extensions/string.ext.js");
+        require("./../extensions/string.ext.js");
 
         NS = exports;
     } else {
@@ -18,7 +18,8 @@
     //using underscore.js _ as base object
     //changing and augmenting it where we want to
 
-    NS.extendWithUtils = function (utils, log) {
+    NS.UtilsBase = {};
+    NS.UtilsBase.addTo = function (utils, log) {
 
         if (typeof(log) != "object") {
             console.warn("UtilsBase : no logging object provided, using browser console logger");

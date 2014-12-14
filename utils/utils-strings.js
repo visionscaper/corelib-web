@@ -8,7 +8,7 @@
 
     var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
     if (__isNode) {
-        require("./extensions/string.ext.js");
+        require("../extensions/string.ext.js");
 
         NS = exports;
     } else {
@@ -18,8 +18,8 @@
 
     //using underscore.js _ as base object
     //changing and augmenting it where we want to
-
-    NS.extendWithUtils = function (utils, log) {
+    NS.UtilsStrings = {};
+    NS.UtilsStrings.addTo = function (utils, log) {
 
         if (typeof(log) != "object") {
             console.warn("UtilsStrings : no logging object provided, using browser console logger");
@@ -114,6 +114,29 @@
         };
         utils.joinPaths = utils.joinPaths || joinPaths;
 
+
+        utils._mustNOTexist("url");
+
+        var URLPattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+        '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+
+        /**
+         *
+         * Returns true if given string is a valid URL, else false
+         *
+         * @param {String} str ... string to be tested
+         *
+         * @returns {boolean}
+         *
+         */
+        var url = function(str) {
+            return (URLPattern.test(str) === true);
+        };
+        utils.url = utils.url || url;
     };
 
 })();
