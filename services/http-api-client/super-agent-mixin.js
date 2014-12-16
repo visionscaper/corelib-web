@@ -7,17 +7,13 @@
     var _l              = null;
     var request         = null;
 
-    var HTTPAPIClient   = null;
-
     var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
     if (__isNode) {
         var jsface      = require("jsface");
         var Class       = jsface.Class;
 
-        _l              = require('../logger.js').logger;
+        _l              = require('../../logger.js').logger;
         request         = require('superagent');
-
-        HTTPAPIClient   = require('./services/http-api-client.js').logger;
 
         NS = exports;
     } else {
@@ -25,20 +21,9 @@
         NS              = window.__VI__ || window;
 
         request         = NS.request || window.request;
-        HTTPAPIClient   = NS.HTTPAPIClient;
     }
 
-    NS.SAAPIClient = Class(HTTPAPIClient, {
-
-        constructor: function (APIName, APIURL) {
-            var me = "SAAPIClient::constructor";
-            HTTPAPIClient.$super.call(this, APIName, APIURL);
-
-            if (!_.adheresToInterface(request, HTTPAPIClient.requiredAPIClientInterface)) {
-                _l.error(me, "Super agent request object does not conform to expected interface");
-                this._valid = false;
-            }
-        },
+    NS.SuperAgentMixin = Class({
 
         /***************************************************************
          *
@@ -62,7 +47,7 @@
          * @return {Object}             ... request object
          */
         _createRequest : function(method, url, data) {
-            var me = this.getName() + "::SAAPIClient::_createRequest";
+            var me = this.getName() + "::SuperAgentMixin::_createRequest";
 
             if (_.hasMethod(request, method)) {
                 return request[method](url);
@@ -90,7 +75,7 @@
          *
          */
         _sendRequest : function(req, responseCb) {
-            var me      = this.getName() + "::SAAPIClient::_sendRequest";
+            var me      = this.getName() + "::SuperAgentMixin::_sendRequest";
             var success = false;
 
             if (!_.hasMethod(req, 'end')) {
@@ -104,44 +89,6 @@
 
             success = true;
             return success;
-        },
-
-        /**
-         *
-         * Method called on response success
-         * Used by {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
-         *
-         * This method will be called with any number of parameters given through the responseCb by
-         * {{#crossLink "SAAPIClient:_sendRequest"}}{{/crossLink}}
-         *
-         * @method _onSuccessResponse
-         * @protected
-         *
-         * @param {String} data                         ... Response data
-         *
-         */
-        _onSuccessResponse : function(data) {
-            var me = this.getName() + "::_llRequest";
-            _l.warn(me, "No implementation provided on request success. At least provide empty method");
-        },
-
-        /**
-         *
-         * Method called on error response
-         * Used by {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
-         *
-         * This method will be called with any number of parameters given through the responseCb by
-         * {{#crossLink "SAAPIClient:_sendRequest"}}{{/crossLink}}
-         *
-         * @method _onErrorResponse
-         * @protected
-         *
-         * @param {RequestError} err                    ... Request error
-         *
-         */
-        _onErrorResponse : function(err) {
-            var me = this.getName() + "::_onErrorResponse";
-            _l.warn(me, "No implementation provided on request success. At least provide empty method");
         }
     });
 })();

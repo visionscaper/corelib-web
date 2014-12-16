@@ -13,8 +13,8 @@
     if (__isNode) {
         var jsface  = require("jsface");
         var Class   = jsface.Class;
-        Base    = require("../base.js").Base;
-        _l      = require('../logger.js').logger;
+        Base    = require("../../base.js").Base;
+        _l      = require('../../logger.js').logger;
 
         NS = exports;
     } else {
@@ -51,12 +51,6 @@
 
     NS.HTTPAPIClient = Class(NamedBase, {
 
-        $statics : {
-            requiredAPIClientInterface : {
-                method : ["get", "post", "put", "del"]
-            }
-        },
-
         _APIURL : null,
 
         /**
@@ -67,8 +61,8 @@
          * @Class HTTPAPIClient
          * @constructor
          *
-         * @param {String} APIName  ... Name of API
-         * @param {String} APIURL   ... Base URL of API
+         * @param {String} APIName      ... Name of API
+         * @param {String} APIURL       ... Base URL of API
          *
          */
         constructor: function (APIName, APIURL) {
@@ -214,6 +208,16 @@
          ***************************************************************/
 
         /***************** METHODS TO OVERRIDE *****************/
+
+        /**
+         *
+         * Called at construction. Can be overriden by mixins
+         *
+         * @protected
+         */
+        _init : function() {
+
+        },
 
         /**
          *
