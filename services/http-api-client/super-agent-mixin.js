@@ -5,22 +5,30 @@
     var NS              = null;
 
     var _l              = null;
+    var _               = null;
+    var Class           = null;
     var request         = null;
 
     var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
     if (__isNode) {
         var jsface      = require("jsface");
-        var Class       = jsface.Class;
 
+        _               = require('../../util.js').utils;
         _l              = require('../../logger.js').logger;
-        request         = require('superagent');
 
-        NS = exports;
+        request         = require('superagent');
+        Class           = jsface.Class;
+
+        NS              = exports;
     } else {
         //Add to Visionscapers namespace
         NS              = window.__VI__ || window;
 
+        _               = NS.utils;
+        _l              = NS.logger;
+
         request         = NS.request || window.request;
+        Class           = window.jsface.Class;
     }
 
     NS.SuperAgentMixin = Class({
@@ -47,10 +55,15 @@
          * @return {Object}             ... request object
          */
         _createRequest : function(method, url, data) {
-            var me = this.getName() + "::SuperAgentMixin::_createRequest";
+            var me  = this.getName() + "::SuperAgentMixin::_createRequest";
+            var req = null;
 
-            if (_.hasMethod(request, method)) {
-                return request[method](url);
+            if (_.hasMethod(superagent, method)) {
+                req = superagent[method](url);
+                req.set('Content-Type', 'application/json')
+                   .set('Accept', 'application/json');
+
+                return req;
             } else {
                 _l.error(me, "Method {0} is not supported, unable to create request".fmt(method));
                 return null;
@@ -69,22 +82,48 @@
          *
          * @param {Object} req                          ... Request object.
          *                                                  See {{#crossLink "HTTPAPIClient:_createRequest"}}{{/crossLink}}
-         * @param {HTTPAPIClient~ResponseCB} responseCb ... Callback function(data, err) on response
+         * @param {Function} internalResponseCb         ... Callback function(data, err, status, headers) on response
          *
          * @return {Boolean}                            ... True when sending of the request was successful, else false
          *
+         * @protected
          */
-        _sendRequest : function(req, responseCb) {
+        _sendRequest : function(req, internalResponseCb) {
             var me      = this.getName() + "::SuperAgentMixin::_sendRequest";
             var success = false;
+
+            internalResponseCb = _.ensureFunc(internalResponseCb);
 
             if (!_.hasMethod(req, 'end')) {
                 _l.error(me, "Request method does not have the expected end method, unable to send request");
                 return success;
             }
 
-            req.end(function(err, data) {
-                responseCb(data, err);
+            req.end(function(_err, _data) {
+                var data = null;
+                var err  = null;
+
+                if (_.def(_err)) {
+                    err = _err;
+                    internalResponseCb(data, err, -1);
+                    return;
+                }
+
+                _data = _data || {};
+
+                var SAError = _data.error;
+                if (_.obj(SAError)) {
+                    err = {
+                        message : SAError.message || "UNKNOWN ERROR",
+                        status  : _data.status
+                    };
+
+                    internalResponseCb(data, err, _data.status, _data.headers);
+                    return;
+                }
+
+                data = _data.body;
+                internalResponseCb(data, err, _data.status, _data.headers);
             });
 
             success = true;
