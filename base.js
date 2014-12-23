@@ -4,7 +4,8 @@
 
 
 (function() {
-    var NS = null;
+    var NS      = null;
+    var Class   = null;
 
     var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
     if (__isNode) {
@@ -16,7 +17,10 @@
     } else {
         //Add to Visionscapers namespace
         NS = window["__VI__"] || window;
+
+        var Class  = window.jsface.Class;
     }
+
 
     NS.Base = Class({
 
