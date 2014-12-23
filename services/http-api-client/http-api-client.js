@@ -7,14 +7,18 @@
 
     var _l          = null;
     var _           = null;
+    var Class       = null;
     var NamedBase   = null;
 
     var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
     if (__isNode) {
         var jsface  = require("jsface");
-        var Class   = jsface.Class;
-        Base    = require("../../base.js").Base;
-        _l      = require('../../logger.js').logger;
+
+        _           = require('../../utils.js').utils;
+        _l          = require('../../logger.js').logger;
+
+        Class       = jsface.Class;
+        NamedBase   = require("../../base.js").Base;
 
         NS = exports;
     } else {
@@ -23,6 +27,7 @@
 
         _           = NS.utils;
         _l          = NS.logger;
+        Class       = window.jsface.Class;
         NamedBase   = NS.NamedBase;
     }
 
@@ -46,6 +51,7 @@
      *
      * @param {Object} data         ... On success, data send by the server in response of the request
      * @param {RequestError} err    ... On failure, object describing the error
+     * @param {Number} status       ... Response HTTP status
      *
      */
 
@@ -72,10 +78,6 @@
             this._valid     = true;
 
             this._APIURL    = APIURL;
-            if (!_.url(this._APIURL)) {
-                _l.error(me, "Given API URL is not valid, HTTP API Client will not function properly");
-                this._valid = false;
-            }
         },
 
         /**
@@ -85,13 +87,13 @@
          * @method get
          *
          * @param {String} resourcePath                 ... Path to resource to get
-         * @param {HTTPAPIClient~ResponseCB} responseCb ... Callback function(data, err) on response
+         * @param {HTTPAPIClient~ResponseCB} responseCb ... Callback function(data, err, status) on response
          *
          * @returns {Boolean}                           ... true if sending the request was successful else false
          *
          */
         get : function(resourcePath, responseCb) {
-            return this._request("get", resourcePath, null, responseCb);
+            return this.request("get", resourcePath, null, responseCb);
         },
 
         /**
@@ -102,13 +104,13 @@
          *
          * @param {String} resourcePath                  ... Path to resource to Post
          * @param {Object|null} data                     ... Data to Post
-         * @param {HTTPAPIClient~ResponseCB} responseCb  ... Callback function(data, err) on response
+         * @param {HTTPAPIClient~ResponseCB} responseCb  ... Callback function(data, err, status) on response
          *
          * @returns {Boolean}                            ... true if sending the request was successful else false
          *
          */
         post : function(resourcePath, data, responseCb) {
-            return this._request("post", resourcePath, data, responseCb);
+            return this.request("post", resourcePath, data, responseCb);
         },
 
         /**
@@ -119,13 +121,13 @@
          *
          * @param {String} resourcePath                  ... Path to resource to Put
          * @param {Object|null} data                     ... Data to Put
-         * @param {HTTPAPIClient~ResponseCB} responseCb  ... Callback function(data, err) on response
+         * @param {HTTPAPIClient~ResponseCB} responseCb  ... Callback function(data, err, status) on response
          *
          * @returns {Boolean}                            ... true if sending the request was successful else false
          *
          */
         put : function(resourcePath, data, responseCb) {
-            return this._request("put", resourcePath, data, responseCb);
+            return this.request("put", resourcePath, data, responseCb);
         },
 
         /**
@@ -135,13 +137,13 @@
          * @method del
          *
          * @param {String} resourcePath                 ... Path to resource to Delete
-         * @param {HTTPAPIClient~ResponseCB} responseCb ... Callback function(data, err) on response
+         * @param {HTTPAPIClient~ResponseCB} responseCb ... Callback function(data, err, status) on response
          *
          * @returns {Boolean}                           ... true if sending the request was successful else false
          *
          */
         del : function(resourcePath, responseCb) {
-            return this._request("del", resourcePath, null, responseCb);
+            return this.request("del", resourcePath, null, responseCb);
         },
 
         /**
@@ -153,7 +155,7 @@
          * @param {String} method                       ... HTTP Method name
          * @param {String} resourcePath                 ... Path to resource
          * @param {Object|null} data                    ... Request data to send
-         * @param {HTTPAPIClient~ResponseCB} responseCb ... Callback function(data, err) on response
+         * @param {HTTPAPIClient~ResponseCB} responseCb ... Callback function(data, err, status) on response
          *
          * @returns {Boolean}                           ... true if sending the request was successful else false
          *
@@ -176,7 +178,7 @@
 
             responseCb = _.ensureFunc(responseCb, "Ready callback for request");
 
-            var url = _.joinPaths([this._baseURLPath, resourcePath]);
+            var url = _.joinPaths([this._APIURL, resourcePath]);
 
             var req = this._createRequest(method, url, data);
             if (!_.obj(req)) {
@@ -184,20 +186,20 @@
                 return success;
             }
 
-            return this._sendRequest(req, function(data, err) {
-                var argList = Array.prototype.slice.call(arguments, 0);
+            this._willSendRequest(req);
 
+            return this._sendRequest(req, function(data, err, status, headers) {
                 if (!_.def(err)) {
                     //SUCCESS
                     //Call _onRequestSuccess with all provided params
-                    self._onSuccessResponse.apply(self, argList);
+                    self._onSuccessResponse.call(self, data, status, headers);
                 } else {
                     //ERROR
                     //Call _onRequestError with all provided params
-                    self._onErrorResponse.apply(self, argList);
+                    self._onErrorResponse.call(self, err, status, headers);
                 }
 
-                responseCb(data, null);
+                responseCb(data, err, status);
             });
         },
 
@@ -208,16 +210,6 @@
          ***************************************************************/
 
         /***************** METHODS TO OVERRIDE *****************/
-
-        /**
-         *
-         * Called at construction. Can be overriden by mixins
-         *
-         * @protected
-         */
-        _init : function() {
-
-        },
 
         /**
          *
@@ -246,6 +238,15 @@
 
         /**
          *
+         * Called just before the request is send
+         *
+         * @param {object} request  ... request to be sent
+         * @protected
+         */
+        _willSendRequest : function(request) {},
+
+        /**
+         *
          * Method that sends requests
          * Used by {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
          *
@@ -256,12 +257,13 @@
          *
          * @param {Object} req                          ... Request object.
          *                                                  See {{#crossLink "HTTPAPIClient:_createRequest"}}{{/crossLink}}
-         * @param {HTTPAPIClient~ResponseCB} responseCb ... Callback function(data, err) on response
+         * @param {Function} internalResponseCb         ... Callback function(data, err, status, headers) on response
          *
          * @return {Boolean}                            ... True when sending of the request was successful, else false
          *
+         * @protected
          */
-        _sendRequest : function(req, responseCb) {
+        _sendRequest : function(req, internalResponseCb) {
             var me = this.getName() + "::_sendRequest";
 
             _l.error(me, "Send request method not implemented yet. " +
@@ -281,13 +283,13 @@
          * @method _onSuccessResponse
          * @protected
          *
-         * @param {String} data                         ... Response data
+         * @param {object} data                         ... Response data
+         * @param {number} status                       ... Response HTTP status
+         * @param {Object} headers                      ... Response headers
          *
+         * @protected
          */
-        _onSuccessResponse : function(data) {
-            var me = this.getName() + "::_llRequest";
-            _l.warn(me, "No implementation provided on request success. At least provide empty method");
-        },
+        _onSuccessResponse : function(data, status, headers) {},
 
         /**
          *
@@ -301,12 +303,11 @@
          * @protected
          *
          * @param {RequestError} err                    ... Request error
+         * @param {number} status                       ... Response HTTP status
+         * @param {Object} headers                      ... Response headers
          *
          */
-        _onErrorResponse : function(err) {
-            var me = this.getName() + "::_onErrorResponse";
-            _l.warn(me, "No implementation provided on request success. At least provide empty method");
-        }
+        _onErrorResponse : function(err, status, headers) {}
         /*************** END METHODS TO OVERRIDE ***************/
     });
 })();
