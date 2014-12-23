@@ -3,12 +3,13 @@
  */
 
 (function() {
-    var NS = null;
+    var NS      = null;
+    var Class   = null;
 
     var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
     if (__isNode) {
         var jsface = require("jsface");
-        var Class  = jsface.Class;
+        Class  = jsface.Class;
         //var extend = jsface.extend;
 
         require("./extensions/string.ext.js");
@@ -18,10 +19,16 @@
     } else {
         //Add to Visionscapers namespace
         NS = window["__VI__"] || window;
+
+        Class  = window.jsface.Class;
     }
 
+    NS.Logging = {};
+
+    var Logging = NS.Logging;
+
     //Using this to set the Logger static props
-    NS.LoggingLevel = {
+    Logging.LoggingLevel = {
         NO_LOGGING    : 100,
         ERROR         : 4,
         WARN          : 3,
@@ -29,17 +36,17 @@
         DEBUG         : 1
     };
 
-    NS.Logger = Class({
+    Logging.Logger = Class({
 
         $statics        : {
-            noLogging       : NS.LoggingLevel.NO_LOGGING,
-            errorLevel      : NS.LoggingLevel.ERROR,
-            warnLevel       : NS.LoggingLevel.WARN,
-            infoLevel       : NS.LoggingLevel.INFO,
-            debugLevel      : NS.LoggingLevel.DEBUG
+            noLogging       : Logging.LoggingLevel.NO_LOGGING,
+            errorLevel      : Logging.LoggingLevel.ERROR,
+            warnLevel       : Logging.LoggingLevel.WARN,
+            infoLevel       : Logging.LoggingLevel.INFO,
+            debugLevel      : Logging.LoggingLevel.DEBUG
         },
 
-        _logLevel       : NS.LoggingLevel.WARN,
+        _logLevel       : Logging.LoggingLevel.WARN,
 
         // See _setLogLevelNames
         _levelNames         : {},
@@ -53,7 +60,7 @@
 
         constructor : function(level) {
             var me = "Logger::constructor";
-            var _u = NS.Logger.utils;
+            var _u = Logging.Logger.utils;
 
             this._setLogLevelNames();
             this._setLogFunctions();
@@ -61,12 +68,12 @@
 
             if (!_u.def(level)) {
                 console.log("{0} : no logging level given, setting log-level to warn".fmt(me));
-                level = NS.LoggingLevel.WARN;
+                level = Logging.LoggingLevel.WARN;
             }
 
             if (!_u.def(this._logFunc[level])) {
                 console.log("{0} : level {1} unknown, setting log-level to warn".fmt(me, level));
-                level = NS.LoggingLevel.WARN;
+                level = Logging.LoggingLevel.WARN;
             }
 
             this._logLevel = level;
@@ -74,7 +81,7 @@
 
         setLogLevel : function(level) {
             var me = "Logger::setLogLevel";
-            var _u = NS.Logger.utils;
+            var _u = Logging.Logger.utils;
 
             if (!_u.def(level)) {
                 console.error("{0} : no logging level given, doing nothing".fmt(me));
@@ -90,45 +97,45 @@
         },
 
         error : function(me, message) {
-            if (this._logLevel > NS.Logger.errorLevel) {
+            if (this._logLevel > Logging.Logger.errorLevel) {
                 return;
             }
 
             var args = Array.prototype.slice.call(arguments, 0);
-            args.unshift(NS.Logger.errorLevel);
+            args.unshift(Logging.Logger.errorLevel);
 
             this._log.apply(this, args);
         },
 
         warn : function(me, message) {
-            if (this._logLevel > NS.Logger.warnLevel) {
+            if (this._logLevel > Logging.Logger.warnLevel) {
                 return;
             }
 
             var args = Array.prototype.slice.call(arguments, 0);
-            args.unshift(NS.Logger.warnLevel);
+            args.unshift(Logging.Logger.warnLevel);
 
             this._log.apply(this, args);
         },
 
         info : function(me, message) {
-            if (this._logLevel > NS.Logger.infoLevel) {
+            if (this._logLevel > Logging.Logger.infoLevel) {
                 return;
             }
 
             var args = Array.prototype.slice.call(arguments, 0);
-            args.unshift(NS.Logger.infoLevel);
+            args.unshift(Logging.Logger.infoLevel);
 
             this._log.apply(this, args);
         },
 
         debug : function(me, message) {
-            if (this._logLevel > NS.Logger.debugLevel) {
+            if (this._logLevel > Logging.Logger.debugLevel) {
                 return;
             }
 
             var args = Array.prototype.slice.call(arguments, 0);
-            args.unshift(NS.Logger.debugLevel);
+            args.unshift(Logging.Logger.debugLevel);
 
             this._log.apply(this, args);
         },
@@ -140,19 +147,19 @@
          *************************************/
 
         _setLogLevelNames   : function() {
-            this._levelNames[NS.Logger.noLogging]      = "NO LOGGING";
-            this._levelNames[NS.Logger.errorLevel]     = "ERROR";
-            this._levelNames[NS.Logger.warnLevel]      = "WARNING";
-            this._levelNames[NS.Logger.infoLevel]      = "INFO";
-            this._levelNames[NS.Logger.debugLevel]     = "DEBUG";
+            this._levelNames[Logging.Logger.noLogging]      = "NO LOGGING";
+            this._levelNames[Logging.Logger.errorLevel]     = "ERROR";
+            this._levelNames[Logging.Logger.warnLevel]      = "WARNING";
+            this._levelNames[Logging.Logger.infoLevel]      = "INFO";
+            this._levelNames[Logging.Logger.debugLevel]     = "DEBUG";
 
             this._maxLevelNameLength = 0;
             var levels = Object.getOwnPropertyNames(this._levelNames);
             for (var idx in levels) {
                 var level = levels[idx];
 
-                //Don't look at level name length of NS.Logger.noLogging
-                if (level == NS.Logger.noLogging) {
+                //Don't look at level name length of Logging.Logger.noLogging
+                if (level == Logging.Logger.noLogging) {
                     continue;
                 }
 
@@ -164,17 +171,17 @@
         },
 
         _setLogFunctions    : function() {
-            this._logFunc[NS.Logger.noLogging]         = function() {};
-            this._logFunc[NS.Logger.errorLevel]        = console.error || console.log;
-            this._logFunc[NS.Logger.warnLevel]         = console.warn || console.log;
-            this._logFunc[NS.Logger.infoLevel]         = console.info || console.log;
-            this._logFunc[NS.Logger.debugLevel]        = console.debug || console.log;
+            this._logFunc[Logging.Logger.noLogging]         = function() {};
+            this._logFunc[Logging.Logger.errorLevel]        = console.error || console.log;
+            this._logFunc[Logging.Logger.warnLevel]         = console.warn || console.log;
+            this._logFunc[Logging.Logger.infoLevel]         = console.info || console.log;
+            this._logFunc[Logging.Logger.debugLevel]        = console.debug || console.log;
         },
 
         _setLogLevelColors  : function() {
-            this._logLevelColor[NS.Logger.errorLevel]  = '\033[45m'; //Magenta
-            this._logLevelColor[NS.Logger.warnLevel]   = '\033[46m'; //Cyan
-            this._logLevelColor[NS.Logger.infoLevel]   = '\033[42m'; //Green
+            this._logLevelColor[Logging.Logger.errorLevel]  = '\033[45m'; //Magenta
+            this._logLevelColor[Logging.Logger.warnLevel]   = '\033[46m'; //Cyan
+            this._logLevelColor[Logging.Logger.infoLevel]   = '\033[42m'; //Green
         },
 
         /**
@@ -192,7 +199,7 @@
          * @protected
          */
         _preProcessLogText : function(level, logText) {
-            var _u = NS.Logger.utils;
+            var _u = Logging.Logger.utils;
 
             if (__isNode !== true) {
                 return logText;
@@ -202,7 +209,7 @@
         },
 
         _colorText : function(txt, inStr, colorCode) {
-            var _u          = NS.Logger.utils;
+            var _u          = Logging.Logger.utils;
             var coloredTxt  = inStr;
 
             if (_u.def(colorCode)) {
@@ -222,10 +229,10 @@
                         }
 
                         if (i < numPlaces-1){
-                            coloredTxt += colorCode + txt + NS.Logger.colorResetCode;
+                            coloredTxt += colorCode + txt + Logging.Logger.colorResetCode;
                             coloredTxt += inStr.substring(idx+lt, places[i+1]);
                         } else {
-                            coloredTxt += colorCode + txt + NS.Logger.colorResetCode;
+                            coloredTxt += colorCode + txt + Logging.Logger.colorResetCode;
                             coloredTxt += inStr.substring(idx+lt, lis);
                         }
                     }
@@ -245,9 +252,9 @@
          *
          */
         _log : function(level, me, message) {
-            var _u = NS.Logger.utils;
+            var _u = Logging.Logger.utils;
 
-            level = level || NS.Logger.infoLevel;
+            level = level || Logging.Logger.infoLevel;
             message = message || "[NO MESSAGE GIVEN]";
 
             var levelName       = this._levelNames[level];
@@ -291,7 +298,7 @@
 
     /*** Internal util methods to make the logger class
      *   completely independent ***/
-    NS.Logger.utils = {
+    Logging.Logger.utils = {
         def : function(v) {
             return ((v !== null) && (v !== undefined));
         },
@@ -330,6 +337,6 @@
         }
     };
 
-    NS.Logger.colorResetCode = '\033[0m';
+    Logging.Logger.colorResetCode = '\033[0m';
 
 })();
