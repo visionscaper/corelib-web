@@ -116,13 +116,12 @@
 
 
         utils._mustNOTexist("url");
-
         var URLPattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-        '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+            '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
 
         /**
          *
@@ -137,6 +136,11 @@
             return (URLPattern.test(str) === true);
         };
         utils.url = utils.url || url;
+
+        utils._mustNOTexist("trim");
+        //From https://github.com/visionmedia/superagent
+        var trim = function(s) { return s.replace(/(^\s*|\s*$)/g, ''); };
+        utils.trim = utils.trim || trim;
     };
 
 })();
