@@ -12,7 +12,7 @@
     if (__isNode) {
         NS = exports;
 
-        Logging = require('./logging.js');
+        Logging = require('./logging.js').Logging;
     } else {
         //Add to Visionscapers namespace
         NS = window["__VI__"] || window;
