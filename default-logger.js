@@ -2,7 +2,7 @@
  *
  * Adds default 'logger' object to the name space
  *
- * Created by Freddy on 12/12/14.
+ * Created by Freddy Snijder on 12/12/14.
  */
 (function() {
     var NS      = null;
