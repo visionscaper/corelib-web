@@ -1,5 +1,5 @@
 /**
- * Created by Freddy on 14/12/14.
+ * Created by Freddy Snijder on 14/12/14.
  */
 (function() {
     var NS              = null;

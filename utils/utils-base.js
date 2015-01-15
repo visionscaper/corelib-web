@@ -1,5 +1,5 @@
 /**
- * Created by Freddy on 15/05/14.
+ * Created by Freddy Snijder on 15/05/14.
  */
 
 (function() {

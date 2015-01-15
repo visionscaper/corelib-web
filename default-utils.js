@@ -2,7 +2,7 @@
  *
  * Augments Underscore with own utils and adds it to the name space
  *
- * Created by Freddy on 12/12/14.
+ * Created by Freddy Snijder on 12/12/14.
  */
 (function() {
     var me  = "DefaultUtils";
