@@ -18,6 +18,11 @@
     //using underscore.js _ as base object
     //changing and augmenting it where we want to
 
+    /**
+     *
+     * @type {Object} UtilsBase     Object containing base utils
+     *
+     */
     NS.UtilsBase = {};
     NS.UtilsBase.addTo = function (utils, log) {
 

@@ -18,10 +18,19 @@
         //Add to Visionscapers namespace
         NS = window["__VI__"] || window;
 
-        var Class  = window.jsface.Class;
+        Class  = window.jsface.Class;
     }
 
-
+    /**
+     *
+     * Base class for all classes
+     *
+     * The Base class only provides functionality to specify and assess the validity of instances.
+     *
+     * @class Base
+     * @module corelib-web
+     *
+     */
     NS.Base = Class({
 
         _valid: false,
@@ -36,6 +45,14 @@
 
     });
 
+    /**
+     *
+     * NamedBase class is a Base class with functionality to name instances added to it
+     *
+     * @class NamedBase
+     * @module corelib-web
+     *
+     */
     NS.NamedBase = Class(NS.Base, {
 
         _name   : null,
