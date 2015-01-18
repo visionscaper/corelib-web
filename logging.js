@@ -53,10 +53,13 @@
         _maxLevelNameLength : 0,
 
         //See _setLogFunctions
-        _logFunc        : {},
+        _logFunc            : {},
 
         //Used for node.js, see _setLogLevelColors
-        _logLevelColor  : {},
+        _logLevelColor      : {},
+
+        _minMeLength        :  0,
+        _maxMeLength        : 70,
 
         constructor : function(level) {
             var me = "Logger::constructor";
@@ -264,7 +267,18 @@
             var gap             = Array(this._maxLevelNameLength-levelNameLength+1).join(" ");
 
             var preFix          = _u.now() + " [" + levelName + gap  + "] ";
-            if (_u.string(me) && (me.length > 0)) {
+            var meLength        = _u.string(me) ? me.length : 0;
+            if (meLength > 0) {
+
+                if (meLength < this._minMeLength) {
+                    gap = Array(this._minMeLength-meLength+1).join(" ");
+                    me  = me + gap;
+                } else {
+                    if (meLength <= this._maxMeLength) {
+                        this._minMeLength = meLength;
+                    }
+                }
+
                 preFix += me + " : "
             }
 
