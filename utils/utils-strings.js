@@ -127,7 +127,7 @@
          *
          * Returns true if given string is a valid URL, else false
          *
-         * @param {String} str ... string to be tested
+         * @param {String} str     string to be tested
          *
          * @returns {boolean}
          *

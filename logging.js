@@ -191,10 +191,10 @@
          * Default implementation when in node.js environment is to
          * color the log level strings
          *
-         * @param {String} level    ... log level of the log text
-         * @param {String} logText  ... the text string to pre-process
+         * @param {String} level        log level of the log text
+         * @param {String} logText      the text string to pre-process
          *
-         * @return {String}         ... pre-processed log string
+         * @return {String}             pre-processed log string
          *
          * @protected
          */

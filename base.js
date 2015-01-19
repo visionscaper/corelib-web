@@ -21,48 +21,58 @@
         Class  = window.jsface.Class;
     }
 
-    /**
-     *
-     * Base class for all classes
-     *
-     * The Base class only provides functionality to specify and assess the validity of instances.
-     *
-     * @class Base
-     * @module corelib-web
-     *
-     */
-    NS.Base = Class({
+    NS.Base = Class(/** @lends Base.prototype */ {
 
         _valid: false,
 
+        /**
+         *
+         * @class   Base class for all classes. It only provides functionality to specify and
+         *          assess the validity of instances.
+         *
+         * @constructs
+         *
+         */
         constructor: function () {
 
         },
 
+        /**
+         *
+         * Assess if instance is valid
+         *
+         * @returns {boolean}
+         */
         isValid: function () {
             return this._valid;
         }
 
     });
 
-    /**
-     *
-     * NamedBase class is a Base class with functionality to name instances added to it
-     *
-     * @class NamedBase
-     * @module corelib-web
-     *
-     */
-    NS.NamedBase = Class(NS.Base, {
+    NS.NamedBase = Class(NS.Base, /** @lends NamedBase.prototype */ {
 
         _name   : null,
 
+        /**
+         *
+         * @class       NamedBase class is a Base class with functionality to name instances added to it
+         * @augments    Base
+         *
+         * @constructs
+         *
+         */
         constructor: function (name) {
             NS.NamedBase.$super.call(this);
 
             this._name = name || "[UNKNOWN]";
         },
 
+        /**
+         *
+         * Get the name of the instance
+         *
+         * @returns {String}
+         */
         getName: function() {
             return this._name || "[UNKNOWN]";
         }
