@@ -55,20 +55,23 @@
      *
      */
 
-    NS.HTTPAPIClient = Class(NamedBase, /** @lends HTTPAPIClient.prototype */ {
+    NS.HTTPAPIClient = Class(NamedBase, {
 
         _APIURL : null,
 
         /**
-         * @class       An Abstract HTTP API client class, allowing to send HTTP requests to a server.
-         *              Actual implementations can be given by sub-classing this class
          *
-         * @augments    NamedBase
+         * An Abstract HTTP API client class, allowing to send HTTP requests to a server.
+         * Actual implementations can be given by sub-classing this class
          *
-         * @param {String} APIName        Name of API
-         * @param {String} APIURL         Base URL of API
+         * @module      corelib-web
+         * @class       HTTPAPIClient
+         * @extends     NamedBase
          *
-         * @constructs
+         * @constructor
+         *
+         * @param {String} APIName      Name of API
+         * @param {String} APIURL       Base URL of API
          *
          */
         constructor: function (APIName, APIURL) {
@@ -84,6 +87,8 @@
          *
          * Send Get request. Also see {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
          *
+         * @method get
+         *
          * @param {String} resourcePath                   Path to resource to get
          * @param {HTTPAPIClient~ResponseCB} responseCb   Callback function(data, err, status) on response
          *
@@ -97,6 +102,8 @@
         /**
          *
          * Send Post request. Also see {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
+         *
+         * @method post
          *
          * @param {String} resourcePath                    Path to resource to Post
          * @param {Object|null} data                       Data to Post
@@ -113,6 +120,8 @@
          *
          * Send Put request. Also see {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
          *
+         * @method put
+         *
          * @param {String} resourcePath                    Path to resource to Put
          * @param {Object|null} data                       Data to Put
          * @param {HTTPAPIClient~ResponseCB} responseCb    Callback function(data, err, status) on response
@@ -128,6 +137,8 @@
          *
          * Send Delete request. Also see {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
          *
+         * @method del
+         *
          * @param {String} resourcePath                   Path to resource to Delete
          * @param {HTTPAPIClient~ResponseCB} responseCb   Callback function(data, err, status) on response
          *
@@ -141,6 +152,8 @@
         /**
          *
          * Send an HTTP request
+         *
+         * @method request
          *
          * @param {String} method                         HTTP Method name
          * @param {String} resourcePath                   Path to resource

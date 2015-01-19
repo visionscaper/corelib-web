@@ -33,6 +33,18 @@
 
     NS.SuperAgentMixin = Class({
 
+        /**
+         *
+         * Mixin to implement HTTPAPIClient with the SuperAgent library
+         *
+         * @module          corelib-web
+         * @class           SuperAgentMixin
+         * @extensionfor    HTTPAPIClient
+         *
+         *
+         */
+
+
         /***************************************************************
          *
          * PROTECTED METHODS
@@ -53,6 +65,7 @@
          * @param {Object|null} data        data to send
          *
          * @return {Object}                 request object
+         *
          */
         _createRequest : function(method, url, data) {
             var me  = this.getName() + "::SuperAgentMixin::_createRequest";

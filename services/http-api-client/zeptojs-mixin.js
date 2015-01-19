@@ -39,6 +39,16 @@
 
     NS.ZeptoJSMixin = Class({
 
+        /**
+         *
+         * Mixin to implement HTTPAPIClient with the ZeptoJS library
+         *
+         * @module          corelib-web
+         * @class           ZeptoJSMixin
+         * @extensionfor    HTTPAPIClient
+         *
+         */
+
         $statics : {
 
             getResponseHeaders : function(xhr) {
