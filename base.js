@@ -56,7 +56,7 @@
 
     NS.NamedBase = Class(NS.Base, /** @lends NamedBase.prototype */ {
 
-        _name   : null,
+        _instanceName   : null,
 
         /**
          *
@@ -72,20 +72,21 @@
         constructor: function (name) {
             NS.NamedBase.$super.call(this);
 
-            this._name = name || "[UNKNOWN]";
+            this._instanceName = name || "[UNKNOWN]";
         },
 
         /**
          *
          * Get the name of the instance
          *
-         * @method getName
+         * @method getIName
          *
          * @returns {String}
          */
-        getName: function() {
-            return this._name || "[UNKNOWN]";
+        getIName: function() {
+            return this._instanceName || "[UNKNOWN]";
         }
+
     });
 
 })();

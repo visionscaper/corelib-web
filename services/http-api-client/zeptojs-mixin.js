@@ -108,7 +108,7 @@
          * @return {Object}                 request object
          */
         _createRequest : function(method, url, data) {
-            var me = this.getName() + "::ZeptoJSMixin::_createRequest";
+            var me = this.getIName() + "::ZeptoJSMixin::_createRequest";
 
             if (_.string(method)) {
                 method = method.toLowerCase();
@@ -148,7 +148,7 @@
          * @protected
          */
         _sendRequest : function(req, internalResponseCb) {
-            var me      = this.getName() + "::ZeptoJSMixin::_sendRequest";
+            var me      = this.getIName() + "::ZeptoJSMixin::_sendRequest";
             var success = false;
 
             internalResponseCb = _.ensureFunc(internalResponseCb);

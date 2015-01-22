@@ -141,6 +141,16 @@
         //From https://github.com/visionmedia/superagent
         var trim = function(s) { return s.replace(/(^\s*|\s*$)/g, ''); };
         utils.trim = utils.trim || trim;
+
+        utils._mustNOTexist("capitaliseFirst");
+        var capitaliseFirst = function(s) {
+            if (!utils.string(s)) {
+                return null;
+            }
+
+            return s.charAt(0).toUpperCase() + s.slice(1);
+        };
+        utils.capitaliseFirst = utils.capitaliseFirst || capitaliseFirst;
     };
 
 })();

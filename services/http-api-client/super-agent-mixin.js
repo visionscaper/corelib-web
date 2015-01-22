@@ -68,7 +68,7 @@
          *
          */
         _createRequest : function(method, url, data) {
-            var me  = this.getName() + "::SuperAgentMixin::_createRequest";
+            var me  = this.getIName() + "::SuperAgentMixin::_createRequest";
             var req = null;
 
             if (_.hasMethod(superagent, method)) {
@@ -102,7 +102,7 @@
          * @protected
          */
         _sendRequest : function(req, internalResponseCb) {
-            var me      = this.getName() + "::SuperAgentMixin::_sendRequest";
+            var me      = this.getIName() + "::SuperAgentMixin::_sendRequest";
             var success = false;
 
             internalResponseCb = _.ensureFunc(internalResponseCb);

@@ -164,7 +164,7 @@
          *
          */
         request : function(method, resourcePath, data, responseCb) {
-            var me      = this.getName() + "::_request";
+            var me      = this.getIName() + "::_request";
             var self    = this;
 
             var success = false;
@@ -230,7 +230,7 @@
          * @return {Object}               request object
          */
         _createRequest : function(method, url, data) {
-            var me = this.getName() + "::_createRequest";
+            var me = this.getIName() + "::_createRequest";
 
             _l.error(me, "Method to create request not implemented. " +
             "Please override this method in order to send requests");
@@ -266,7 +266,7 @@
          * @protected
          */
         _sendRequest : function(req, internalResponseCb) {
-            var me = this.getName() + "::_sendRequest";
+            var me = this.getIName() + "::_sendRequest";
 
             _l.error(me, "Send request method not implemented yet. " +
             "Please override this method in order to send requests");
