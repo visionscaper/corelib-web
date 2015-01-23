@@ -57,8 +57,8 @@
          *
          **************************************************/
 
-            //Different util components are registered here
-            //This allows us to check in a simple way if certain functionality is available
+        //Different util components are registered here
+        //This allows us to check in a simple way if certain functionality is available
         _mustNOTexist("_utilsComponents");
         utils._utilsComponents = utils._utilsComponents || {
             base: true

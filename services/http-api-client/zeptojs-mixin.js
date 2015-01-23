@@ -39,6 +39,16 @@
 
     NS.ZeptoJSMixin = Class({
 
+        /**
+         *
+         * Mixin to implement HTTPAPIClient with the ZeptoJS library
+         *
+         * @module          corelib-web
+         * @class           ZeptoJSMixin
+         * @extensionfor    HTTPAPIClient
+         *
+         */
+
         $statics : {
 
             getResponseHeaders : function(xhr) {
@@ -91,14 +101,14 @@
          * @method _createRequest
          * @protected
          *
-         * @param {String} method       ... HTTP Method name
-         * @param {String} url          ... Path to resource
-         * @param {Object|null} data    ... data to send
+         * @param {String} method           HTTP Method name
+         * @param {String} url              Path to resource
+         * @param {Object|null} data        data to send
          *
-         * @return {Object}             ... request object
+         * @return {Object}                 request object
          */
         _createRequest : function(method, url, data) {
-            var me = this.getName() + "::ZeptoJSMixin::_createRequest";
+            var me = this.getIName() + "::ZeptoJSMixin::_createRequest";
 
             if (_.string(method)) {
                 method = method.toLowerCase();
@@ -129,16 +139,16 @@
          * @method _sendRequest
          * @protected
          *
-         * @param {Object} req                          ... Request object.
+         * @param {Object} req                              Request object.
          *                                                  See {{#crossLink "HTTPAPIClient:_createRequest"}}{{/crossLink}}
-         * @param {Function} internalResponseCb         ... Callback function(data, err, status, headers) on response
+         * @param {Function} internalResponseCb             Callback function(data, err, status, headers) on response
          *
-         * @return {Boolean}                            ... True when sending of the request was successful, else false
+         * @return {Boolean}                                True when sending of the request was successful, else false
          *
          * @protected
          */
         _sendRequest : function(req, internalResponseCb) {
-            var me      = this.getName() + "::ZeptoJSMixin::_sendRequest";
+            var me      = this.getIName() + "::ZeptoJSMixin::_sendRequest";
             var success = false;
 
             internalResponseCb = _.ensureFunc(internalResponseCb);

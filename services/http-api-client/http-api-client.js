@@ -36,10 +36,10 @@
      * @typedef RequestError
      * @type {object}
      *
-     * @property {string} message       ... message describing the error
-     * @property {string} [errorCode]   ... A code string representing the error
-     * @property {*} [originalError]    ... A reference to the error that resulted in this error
-     * @property {number} [status]      ... HTTP status code
+     * @property {string} message         message describing the error
+     * @property {string} [errorCode]     A code string representing the error
+     * @property {*} [originalError]      A reference to the error that resulted in this error
+     * @property {number} [status]        HTTP status code
      *
      */
 
@@ -49,9 +49,9 @@
      *
      * @callback HTTPAPIClient~ResponseCB
      *
-     * @param {Object} data         ... On success, data send by the server in response of the request
-     * @param {RequestError} err    ... On failure, object describing the error
-     * @param {Number} status       ... Response HTTP status
+     * @param {Object} data           On success, data send by the server in response of the request
+     * @param {RequestError} err      On failure, object describing the error
+     * @param {Number} status         Response HTTP status
      *
      */
 
@@ -64,11 +64,14 @@
          * An Abstract HTTP API client class, allowing to send HTTP requests to a server.
          * Actual implementations can be given by sub-classing this class
          *
-         * @Class HTTPAPIClient
+         * @module      corelib-web
+         * @class       HTTPAPIClient
+         * @extends     NamedBase
+         *
          * @constructor
          *
-         * @param {String} APIName      ... Name of API
-         * @param {String} APIURL       ... Base URL of API
+         * @param {String} APIName      Name of API
+         * @param {String} APIURL       Base URL of API
          *
          */
         constructor: function (APIName, APIURL) {
@@ -86,10 +89,10 @@
          *
          * @method get
          *
-         * @param {String} resourcePath                 ... Path to resource to get
-         * @param {HTTPAPIClient~ResponseCB} responseCb ... Callback function(data, err, status) on response
+         * @param {String} resourcePath                   Path to resource to get
+         * @param {HTTPAPIClient~ResponseCB} responseCb   Callback function(data, err, status) on response
          *
-         * @returns {Boolean}                           ... true if sending the request was successful else false
+         * @returns {Boolean}                             true if sending the request was successful else false
          *
          */
         get : function(resourcePath, responseCb) {
@@ -102,11 +105,11 @@
          *
          * @method post
          *
-         * @param {String} resourcePath                  ... Path to resource to Post
-         * @param {Object|null} data                     ... Data to Post
-         * @param {HTTPAPIClient~ResponseCB} responseCb  ... Callback function(data, err, status) on response
+         * @param {String} resourcePath                    Path to resource to Post
+         * @param {Object|null} data                       Data to Post
+         * @param {HTTPAPIClient~ResponseCB} responseCb    Callback function(data, err, status) on response
          *
-         * @returns {Boolean}                            ... true if sending the request was successful else false
+         * @returns {Boolean}                              true if sending the request was successful else false
          *
          */
         post : function(resourcePath, data, responseCb) {
@@ -119,11 +122,11 @@
          *
          * @method put
          *
-         * @param {String} resourcePath                  ... Path to resource to Put
-         * @param {Object|null} data                     ... Data to Put
-         * @param {HTTPAPIClient~ResponseCB} responseCb  ... Callback function(data, err, status) on response
+         * @param {String} resourcePath                    Path to resource to Put
+         * @param {Object|null} data                       Data to Put
+         * @param {HTTPAPIClient~ResponseCB} responseCb    Callback function(data, err, status) on response
          *
-         * @returns {Boolean}                            ... true if sending the request was successful else false
+         * @returns {Boolean}                              true if sending the request was successful else false
          *
          */
         put : function(resourcePath, data, responseCb) {
@@ -136,10 +139,10 @@
          *
          * @method del
          *
-         * @param {String} resourcePath                 ... Path to resource to Delete
-         * @param {HTTPAPIClient~ResponseCB} responseCb ... Callback function(data, err, status) on response
+         * @param {String} resourcePath                   Path to resource to Delete
+         * @param {HTTPAPIClient~ResponseCB} responseCb   Callback function(data, err, status) on response
          *
-         * @returns {Boolean}                           ... true if sending the request was successful else false
+         * @returns {Boolean}                             true if sending the request was successful else false
          *
          */
         del : function(resourcePath, responseCb) {
@@ -152,16 +155,16 @@
          *
          * @method request
          *
-         * @param {String} method                       ... HTTP Method name
-         * @param {String} resourcePath                 ... Path to resource
-         * @param {Object|null} data                    ... Request data to send
-         * @param {HTTPAPIClient~ResponseCB} responseCb ... Callback function(data, err, status) on response
+         * @param {String} method                         HTTP Method name
+         * @param {String} resourcePath                   Path to resource
+         * @param {Object|null} data                      Request data to send
+         * @param {HTTPAPIClient~ResponseCB} responseCb   Callback function(data, err, status) on response
          *
-         * @returns {Boolean}                           ... true if sending the request was successful else false
+         * @returns {Boolean}                             true if sending the request was successful else false
          *
          */
         request : function(method, resourcePath, data, responseCb) {
-            var me      = this.getName() + "::_request";
+            var me      = this.getIName() + "::_request";
             var self    = this;
 
             var success = false;
@@ -218,20 +221,19 @@
          *
          * This method needs to be overridden by any subclass
          *
-         * @method _createRequest
          * @protected
          *
-         * @param {String} method       ... HTTP Method name
-         * @param {String} url          ... Request URL
-         * @param {Object|null} data    ... data to send
+         * @param {String} method         HTTP Method name
+         * @param {String} url            Request URL
+         * @param {Object|null} data      data to send
          *
-         * @return {Object}             ... request object
+         * @return {Object}               request object
          */
         _createRequest : function(method, url, data) {
-            var me = this.getName() + "::_createRequest";
+            var me = this.getIName() + "::_createRequest";
 
             _l.error(me, "Method to create request not implemented. " +
-                         "Please override this method in order to send requests");
+            "Please override this method in order to send requests");
 
             return null;
         },
@@ -240,7 +242,7 @@
          *
          * Called just before the request is send
          *
-         * @param {object} request  ... request to be sent
+         * @param {object} request    request to be sent
          * @protected
          */
         _willSendRequest : function(request) {},
@@ -255,19 +257,19 @@
          * @method _sendRequest
          * @protected
          *
-         * @param {Object} req                          ... Request object.
+         * @param {Object} req                            Request object.
          *                                                  See {{#crossLink "HTTPAPIClient:_createRequest"}}{{/crossLink}}
-         * @param {Function} internalResponseCb         ... Callback function(data, err, status, headers) on response
+         * @param {Function} internalResponseCb           Callback function(data, err, status, headers) on response
          *
-         * @return {Boolean}                            ... True when sending of the request was successful, else false
+         * @return {Boolean}                              True when sending of the request was successful, else false
          *
          * @protected
          */
         _sendRequest : function(req, internalResponseCb) {
-            var me = this.getName() + "::_sendRequest";
+            var me = this.getIName() + "::_sendRequest";
 
             _l.error(me, "Send request method not implemented yet. " +
-                         "Please override this method in order to send requests");
+            "Please override this method in order to send requests");
 
             return false;
         },
@@ -283,9 +285,9 @@
          * @method _onSuccessResponse
          * @protected
          *
-         * @param {object} data                         ... Response data
-         * @param {number} status                       ... Response HTTP status
-         * @param {Object} headers                      ... Response headers
+         * @param {object} data                           Response data
+         * @param {number} status                         Response HTTP status
+         * @param {Object} headers                        Response headers
          *
          * @protected
          */
@@ -302,9 +304,9 @@
          * @method _onErrorResponse
          * @protected
          *
-         * @param {RequestError} err                    ... Request error
-         * @param {number} status                       ... Response HTTP status
-         * @param {Object} headers                      ... Response headers
+         * @param {RequestError} err                      Request error
+         * @param {number} status                         Response HTTP status
+         * @param {Object} headers                        Response headers
          *
          */
         _onErrorResponse : function(err, status, headers) {}

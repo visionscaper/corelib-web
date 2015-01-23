@@ -18,37 +18,75 @@
         //Add to Visionscapers namespace
         NS = window["__VI__"] || window;
 
-        var Class  = window.jsface.Class;
+        Class  = window.jsface.Class;
     }
-
 
     NS.Base = Class({
 
         _valid: false,
 
+        /**
+         *
+         * Base class for all classes. It only provides functionality to specify and
+         * assess the validity of instances.
+         *
+         * @module  corelib-web
+         * @class   Base
+         *
+         * @constructor
+         *
+         */
         constructor: function () {
 
         },
 
+        /**
+         *
+         * Assess if instance is valid
+         *
+         * @method isValid
+         *
+         * @returns {boolean}
+         */
         isValid: function () {
             return this._valid;
         }
 
     });
 
-    NS.NamedBase = Class(NS.Base, {
+    NS.NamedBase = Class(NS.Base, /** @lends NamedBase.prototype */ {
 
-        _name   : null,
+        _instanceName   : null,
 
+        /**
+         *
+         * NamedBase class is a Base class with functionality to name instances added to it
+         *
+         * @module      corelib-web
+         * @class       NamedBase
+         * @extends     Base
+         *
+         * @constructor
+         *
+         */
         constructor: function (name) {
             NS.NamedBase.$super.call(this);
 
-            this._name = name || "[UNKNOWN]";
+            this._instanceName = name || "[UNKNOWN]";
         },
 
-        getName: function() {
-            return this._name || "[UNKNOWN]";
+        /**
+         *
+         * Get the name of the instance
+         *
+         * @method getIName
+         *
+         * @returns {String}
+         */
+        getIName: function() {
+            return this._instanceName || "[UNKNOWN]";
         }
+
     });
 
 })();

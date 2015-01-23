@@ -61,6 +61,15 @@
         _minMeLength        :  0,
         _maxMeLength        : 70,
 
+        /**
+         * Creates a logger object that shows logs of log-level 'level' and higher levels
+         *
+         * @module      corelib-web
+         * @class       Logging.Logger
+         *
+         * @param {number} level    See Logging.LoggingLevel
+         *
+         */
         constructor : function(level) {
             var me = "Logger::constructor";
             var _u = Logging.Logger.utils;
@@ -82,6 +91,13 @@
             this._logLevel = level;
         },
 
+        /**
+         *
+         * @method setLogLevel
+         *
+         * @param level     See Logging.LoggingLevel
+         *
+         */
         setLogLevel : function(level) {
             var me = "Logger::setLogLevel";
             var _u = Logging.Logger.utils;
@@ -99,6 +115,16 @@
             this._logLevel = level;
         },
 
+        /**
+         *
+         * Log error message
+         *
+         * @method error
+         *
+         * @param {string} me       String indicating which entity or method reports this message
+         * @param (string} message  The error message
+         *
+         */
         error : function(me, message) {
             if (this._logLevel > Logging.Logger.errorLevel) {
                 return;
@@ -110,6 +136,16 @@
             this._log.apply(this, args);
         },
 
+        /**
+         *
+         * Warn error message
+         *
+         * @method warn
+         *
+         * @param {string} me       String indicating which entity or method reports this message
+         * @param (string} message  The warning message
+         *
+         */
         warn : function(me, message) {
             if (this._logLevel > Logging.Logger.warnLevel) {
                 return;
@@ -121,6 +157,16 @@
             this._log.apply(this, args);
         },
 
+        /**
+         *
+         * Info error message
+         *
+         * @method info
+         *
+         * @param {string} me       String indicating which entity or method reports this message
+         * @param (string} message  The info message
+         *
+         */
         info : function(me, message) {
             if (this._logLevel > Logging.Logger.infoLevel) {
                 return;
@@ -132,6 +178,16 @@
             this._log.apply(this, args);
         },
 
+        /**
+         *
+         * Debug error message
+         *
+         * @method debug
+         *
+         * @param {string} me       String indicating which entity or method reports this message
+         * @param (string} message  The debug message
+         *
+         */
         debug : function(me, message) {
             if (this._logLevel > Logging.Logger.debugLevel) {
                 return;
@@ -149,6 +205,14 @@
          *
          *************************************/
 
+        /**
+         *
+         * TODO Description
+         *
+         * @method _setLogLevelNames
+         * @protected
+         *
+         */
         _setLogLevelNames   : function() {
             this._levelNames[Logging.Logger.noLogging]      = "NO LOGGING";
             this._levelNames[Logging.Logger.errorLevel]     = "ERROR";
@@ -173,6 +237,14 @@
             }
         },
 
+        /**
+         *
+         * TODO Description
+         *
+         * @method _setLogFunctions
+         * @protected
+         *
+         */
         _setLogFunctions    : function() {
             this._logFunc[Logging.Logger.noLogging]         = function() {};
             this._logFunc[Logging.Logger.errorLevel]        = console.error || console.log;
@@ -181,6 +253,14 @@
             this._logFunc[Logging.Logger.debugLevel]        = console.debug || console.log;
         },
 
+        /**
+         *
+         * TODO Description
+         *
+         * @method _setLogLevelColors
+         * @protected
+         *
+         */
         _setLogLevelColors  : function() {
             this._logLevelColor[Logging.Logger.errorLevel]  = '\033[45m'; //Magenta
             this._logLevelColor[Logging.Logger.warnLevel]   = '\033[46m'; //Cyan
@@ -194,12 +274,14 @@
          * Default implementation when in node.js environment is to
          * color the log level strings
          *
-         * @param {String} level    ... log level of the log text
-         * @param {String} logText  ... the text string to pre-process
-         *
-         * @return {String}         ... pre-processed log string
-         *
+         * @method _preProcessLogText
          * @protected
+         *
+         * @param {String} level        log level of the log text
+         * @param {String} logText      the text string to pre-process
+         *
+         * @return {String}             pre-processed log string
+         *
          */
         _preProcessLogText : function(level, logText) {
             var _u = Logging.Logger.utils;
@@ -211,6 +293,14 @@
             return this._colorText(this._levelNames[level], logText, this._logLevelColor[level]);
         },
 
+        /**
+         *
+         * TODO Description
+         *
+         * @method _colorText
+         * @protected
+         *
+         */
         _colorText : function(txt, inStr, colorCode) {
             var _u          = Logging.Logger.utils;
             var coloredTxt  = inStr;
@@ -246,12 +336,14 @@
         },
 
         /**
+         * TODO Description
+         *
+         * @protected
+         * @method _log
          *
          * @param {number} [level=Logger.infoLevel]
          * @param {string} [me=null]
          * @param {string} [message="[NO MESSAGE GIVEN]"]
-         *
-         * @protected
          *
          */
         _log : function(level, me, message) {

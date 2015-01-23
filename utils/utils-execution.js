@@ -70,27 +70,27 @@
         };
         utils.hasMethod = utils.hasMethod || hasMethod;
 
-        utils._mustNOTexist("do");
+        utils._mustNOTexist("call");
         /**
          *
          * Executes method with name methodName on obj with params paramList
          *
-         * @param {Object} obj                  ... object on which to call method
-         * @param {String} methodName           ... name of method to call
-         * @param {Array|*} paramList           ... array of argument values, or single value when calling with
+         * @param {Object} obj                      object on which to call method
+         * @param {String} methodName               name of method to call
+         * @param {Array|*} paramList               array of argument values, or single value when calling with
          *                                          single argument, use [] to call without argument
          *
-         * @param {String} [objectName=null]    ... When the objectName string is not empty (and not null) the
+         * @param {String} [objectName=null]        When the objectName string is not empty (and not null) the
          *                                          function will log messages (including the objectName) when
          *                                          necessary. When it is empty or null, no logging is performed
 
          *
-         * @returns {*}                         ... Return value of method call, when the call is not found the
+         * @returns {*}                             Return value of method call, when the call is not found the
          *                                          return value is always undefined.
          *
          */
-        var doUtilFunc = function (obj, methodName, paramList, objectName) {
-            var me          = "Utils::do";
+        var callUtilFunc = function (obj, methodName, paramList, objectName) {
+            var me          = "Utils::call";
             var returnVal   = undefined;
 
             var doLog       = !utils.empty(objectName);
@@ -109,21 +109,21 @@
 
             return returnVal;
         };
-        utils.do = utils.do || doUtilFunc;
+        utils.call = utils.call || callUtilFunc;
 
         utils._mustNOTexist("interfaceAdheres");
         /**
          *
          * Checks if object obj adheres to interface defined by interfaceDef
          *
-         * @param {Object} obj                          ... The object that is tested if it adheres to
+         * @param {Object} obj                              The object that is tested if it adheres to
          *                                                  interface interfaceDef
          *
-         * @param {Object} interfaceDef                 ... Object defining the interface that obj needs to have
-         * @param {Array} [interfaceDef.methods=[]]     ... Array with method names
-         * @param {Array} [interfaceDef.properties=[]]  ... Array with property names
+         * @param {Object} interfaceDef                     Object defining the interface that obj needs to have
+         * @param {Array} [interfaceDef.methods=[]]         Array with method names
+         * @param {Array} [interfaceDef.properties=[]]      Array with property names
          *
-         * @param {String} [description=null]           ... When the description string not is empty (and not null) the
+         * @param {String} [description=null]               When the description string not is empty (and not null) the
          *                                                  function will log messages (including the description) when
          *                                                  necessary. When it is empty or null, no logging is performed
          *
@@ -205,7 +205,7 @@
          *
          * Executes all functions in funcHash in series and returns when all functions have called back.
          *
-         * @param {object} funcHash                 ... hash object of functions to execute in series:
+         * @param {object} funcHash                     hash object of functions to execute in series:
          *                                              {
          *                                                  'funcName1' : func1(cbReady),
          *                                                  'funcName2' : func2(dataIn, errIn, cbReady),
@@ -219,11 +219,11 @@
          *                                              Every func1...N calls cbReady(dataOut, errOut)
          *                                              If no error, err is undefined or null
          *
-         * @param {function} allCallsCompletedCb    ... function(data, err) Calls this function if all functions are ready
+         * @param {function} allCallsCompletedCb        function(data, err) Calls this function if all functions are ready
          *                                              or when forceComplete=false and any function calls cbReady with
          *                                              error
          *
-         * @param {boolean} [forceComplete = false] ... If true the function waits until every function has called their
+         * @param {boolean} [forceComplete = false]     If true the function waits until every function has called their
          *                                              cbReady func, even if one or more functions called cbReady
          *                                              with error
          *
@@ -349,7 +349,7 @@
          * Executes all functions in funcHash ASYNChronously and calls
          *  allCallsCompletedCb when all funcs have called back.
          *
-         * @param {object} funcHash                 ... hash object of functions to execute asynchronously:
+         * @param {object} funcHash                     hash object of functions to execute asynchronously:
          *                                              {
          *                                                  'funcName1' : func1(cbReady),
          *                                                  'funcName2' : func2(cbReady),
@@ -360,7 +360,7 @@
          *                                              every func1...N calls cbReady(err).
          *                                              If no error err is undefined or null.
          *
-         * @param {function} allCallsCompletedCb    ... function(errHash) This function is called when all functions called
+         * @param {function} allCallsCompletedCb        function(errHash) This function is called when all functions called
          *                                              their cbReady callback, or when forceComplete=false and any
          *                                              function calls cbReady with error.
          *
@@ -368,7 +368,7 @@
          *                                              error an error object. Thus when 'funcName_i' resulted in error,
          *                                              errHash['funcName_i']
          *
-         * @param {boolean} [forceComplete = false] ... If true the function waits until every function has called their
+         * @param {boolean} [forceComplete = false]     If true the function waits until every function has called their
          *                                              cbReady func, even if one or more functions called cbReady with
          *                                              error
          *
