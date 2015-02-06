@@ -90,13 +90,14 @@
          * @method get
          *
          * @param {String} resourcePath                   Path to resource to get
+         * @param {Object} [options]                      Get request options, is converted in to query parameters
          * @param {HTTPAPIClient~ResponseCB} responseCb   Callback function(data, err, status) on response
          *
          * @returns {Boolean}                             true if sending the request was successful else false
          *
          */
-        get : function(resourcePath, responseCb) {
-            return this.request("get", resourcePath, null, responseCb);
+        get : function(resourcePath, options, responseCb) {
+            return this.request("get", resourcePath, options, responseCb);
         },
 
         /**

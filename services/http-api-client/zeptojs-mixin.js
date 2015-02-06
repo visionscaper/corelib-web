@@ -42,10 +42,12 @@
         /**
          *
          * Mixin to implement HTTPAPIClient with the ZeptoJS library
+         * Uses JSON as content type
          *
          * @module          corelib-web
          * @class           ZeptoJSMixin
-         * @extensionfor    HTTPAPIClient
+         *
+         * @for             HTTPAPIClient
          *
          */
 

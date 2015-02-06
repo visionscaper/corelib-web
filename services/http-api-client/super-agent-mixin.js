@@ -36,10 +36,12 @@
         /**
          *
          * Mixin to implement HTTPAPIClient with the SuperAgent library
+         * Uses JSON as content type
          *
          * @module          corelib-web
          * @class           SuperAgentMixin
-         * @extensionfor    HTTPAPIClient
+         *
+         * @for             HTTPAPIClient
          *
          *
          */
