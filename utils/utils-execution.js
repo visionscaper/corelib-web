@@ -70,7 +70,7 @@
         };
         utils.hasMethod = utils.hasMethod || hasMethod;
 
-        utils._mustNOTexist("call");
+        utils._mustNOTexist("exec");
         /**
          *
          * Executes method with name methodName on obj with params paramList
@@ -89,7 +89,7 @@
          *                                          return value is always undefined.
          *
          */
-        var callUtilFunc = function (obj, methodName, paramList, objectName) {
+        var execUtilFunc = function (obj, methodName, paramList, objectName) {
             var me          = "Utils::call";
             var returnVal   = undefined;
 
@@ -109,7 +109,7 @@
 
             return returnVal;
         };
-        utils.call = utils.call || callUtilFunc;
+        utils.exec = utils.exec || execUtilFunc;
 
         utils._mustNOTexist("interfaceAdheres");
         /**
