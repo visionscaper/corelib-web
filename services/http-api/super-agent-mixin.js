@@ -35,13 +35,13 @@
 
         /**
          *
-         * Mixin to implement HTTPAPIClient with the SuperAgent library
+         * Mixin to implement HTTPAPI with the SuperAgent library
          * Uses JSON as content type
          *
          * @module          corelib-web
          * @class           SuperAgentMixin
          *
-         * @for             HTTPAPIClient
+         * @for             HTTPAPI
          *
          *
          */
@@ -55,7 +55,7 @@
         /**
          *
          * Method that creates a request so it can be send
-         * Used by {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
+         * Used by {{#crossLink "HTTPAPI:request"}}{{/crossLink}}
          *
          * This method needs to be overridden by any subclass
          *
@@ -88,7 +88,7 @@
         /**
          *
          * Method that sends requests
-         * Used by {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
+         * Used by {{#crossLink "HTTPAPI:request"}}{{/crossLink}}
          *
          * This method needs to be overridden by any subclass
          *
@@ -96,7 +96,7 @@
          * @protected
          *
          * @param {Object} req                              Request object.
-         *                                                  See {{#crossLink "HTTPAPIClient:_createRequest"}}{{/crossLink}}
+         *                                                  See {{#crossLink "HTTPAPI:_createRequest"}}{{/crossLink}}
          * @param {Function} internalResponseCb             Callback function(data, err, status, headers) on response
          *
          * @return {Boolean}                                True when sending of the request was successful, else false

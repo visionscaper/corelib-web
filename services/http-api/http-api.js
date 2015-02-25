@@ -47,7 +47,7 @@
      *
      * Response callback
      *
-     * @callback HTTPAPIClient~ResponseCB
+     * @callback HTTPAPI~ResponseCB
      *
      * @param {Object} data           On success, data send by the server in response of the request
      * @param {RequestError} err      On failure, object describing the error
@@ -55,17 +55,17 @@
      *
      */
 
-    NS.HTTPAPIClient = Class(NamedBase, {
+    NS.HTTPAPI = Class(NamedBase, {
 
         _APIURL : null,
 
         /**
          *
-         * An Abstract HTTP API client class, allowing to send HTTP requests to a server.
+         * An Abstract HTTP API class, allowing to send HTTP requests to a server.
          * Actual implementations can be given by sub-classing this class
          *
          * @module      corelib-web
-         * @class       HTTPAPIClient
+         * @class       HTTPAPI
          * @extends     NamedBase
          *
          * @constructor
@@ -75,8 +75,8 @@
          *
          */
         constructor: function (APIName, APIURL) {
-            var me = "HTTPAPIClient::constructor";
-            NS.HTTPAPIClient.$super.call(this, APIName);
+            var me = "HTTPAPI::constructor";
+            NS.HTTPAPI.$super.call(this, APIName);
 
             this._valid     = true;
 
@@ -85,13 +85,13 @@
 
         /**
          *
-         * Send Get request. Also see {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
+         * Send Get request. Also see {{#crossLink "HTTPAPI:request"}}{{/crossLink}}
          *
          * @method get
          *
          * @param {String} resourcePath                   Path to resource to get
          * @param {Object} [options]                      Get request options, is converted in to query parameters
-         * @param {HTTPAPIClient~ResponseCB} responseCb   Callback function(data, err, status) on response
+         * @param {HTTPAPI~ResponseCB} responseCb   Callback function(data, err, status) on response
          *
          * @returns {Boolean}                             true if sending the request was successful else false
          *
@@ -102,13 +102,13 @@
 
         /**
          *
-         * Send Post request. Also see {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
+         * Send Post request. Also see {{#crossLink "HTTPAPI:request"}}{{/crossLink}}
          *
          * @method post
          *
          * @param {String} resourcePath                    Path to resource to Post
          * @param {Object|null} data                       Data to Post
-         * @param {HTTPAPIClient~ResponseCB} responseCb    Callback function(data, err, status) on response
+         * @param {HTTPAPI~ResponseCB} responseCb    Callback function(data, err, status) on response
          *
          * @returns {Boolean}                              true if sending the request was successful else false
          *
@@ -119,13 +119,13 @@
 
         /**
          *
-         * Send Put request. Also see {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
+         * Send Put request. Also see {{#crossLink "HTTPAPI:request"}}{{/crossLink}}
          *
          * @method put
          *
          * @param {String} resourcePath                    Path to resource to Put
          * @param {Object|null} data                       Data to Put
-         * @param {HTTPAPIClient~ResponseCB} responseCb    Callback function(data, err, status) on response
+         * @param {HTTPAPI~ResponseCB} responseCb    Callback function(data, err, status) on response
          *
          * @returns {Boolean}                              true if sending the request was successful else false
          *
@@ -136,12 +136,12 @@
 
         /**
          *
-         * Send Delete request. Also see {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
+         * Send Delete request. Also see {{#crossLink "HTTPAPI:request"}}{{/crossLink}}
          *
          * @method del
          *
          * @param {String} resourcePath                   Path to resource to Delete
-         * @param {HTTPAPIClient~ResponseCB} responseCb   Callback function(data, err, status) on response
+         * @param {HTTPAPI~ResponseCB} responseCb   Callback function(data, err, status) on response
          *
          * @returns {Boolean}                             true if sending the request was successful else false
          *
@@ -159,7 +159,7 @@
          * @param {String} method                         HTTP Method name
          * @param {String} resourcePath                   Path to resource
          * @param {Object|null} data                      Request data to send
-         * @param {HTTPAPIClient~ResponseCB} responseCb   Callback function(data, err, status) on response
+         * @param {HTTPAPI~ResponseCB} responseCb   Callback function(data, err, status) on response
          *
          * @returns {Boolean}                             true if sending the request was successful else false
          *
@@ -171,7 +171,7 @@
             var success = false;
 
             if (!this.isValid()) {
-                _l.error(me, "API client is not valid, unable to send [{0}] request".fmt(method));
+                _l.error(me, "API is not valid, unable to send [{0}] request".fmt(method));
                 return success;
             }
 
@@ -218,7 +218,7 @@
         /**
          *
          * Method that creates a request so it can be send
-         * Used by {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
+         * Used by {{#crossLink "HTTPAPI:request"}}{{/crossLink}}
          *
          * This method needs to be overridden by any subclass
          *
@@ -251,7 +251,7 @@
         /**
          *
          * Method that sends requests
-         * Used by {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
+         * Used by {{#crossLink "HTTPAPI:request"}}{{/crossLink}}
          *
          * This method needs to be overridden by any subclass
          *
@@ -259,7 +259,7 @@
          * @protected
          *
          * @param {Object} req                            Request object.
-         *                                                  See {{#crossLink "HTTPAPIClient:_createRequest"}}{{/crossLink}}
+         *                                                  See {{#crossLink "HTTPAPI:_createRequest"}}{{/crossLink}}
          * @param {Function} internalResponseCb           Callback function(data, err, status, headers) on response
          *
          * @return {Boolean}                              True when sending of the request was successful, else false
@@ -278,10 +278,10 @@
         /**
          *
          * Method called on response success
-         * Used by {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
+         * Used by {{#crossLink "HTTPAPI:request"}}{{/crossLink}}
          *
          * This method will be called with any number of parameters given through the responseCb by
-         * {{#crossLink "HTTPAPIClient:_sendRequest"}}{{/crossLink}}
+         * {{#crossLink "HTTPAPI:_sendRequest"}}{{/crossLink}}
          *
          * @method _onSuccessResponse
          * @protected
@@ -297,10 +297,10 @@
         /**
          *
          * Method called on error response
-         * Used by {{#crossLink "HTTPAPIClient:request"}}{{/crossLink}}
+         * Used by {{#crossLink "HTTPAPI:request"}}{{/crossLink}}
          *
          * This method will be called with any number of parameters given through the responseCb by
-         * {{#crossLink "HTTPAPIClient:_sendRequest"}}{{/crossLink}}
+         * {{#crossLink "HTTPAPI:_sendRequest"}}{{/crossLink}}
          *
          * @method _onErrorResponse
          * @protected
