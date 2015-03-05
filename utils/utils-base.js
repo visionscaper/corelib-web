@@ -107,6 +107,11 @@
         _mustExist("isEmpty");
         utils.empty = utils.empty || utils.isEmpty;
 
+        _mustNOTexist("class");
+        utils.class = utils.class || function (C) {
+            return utils.func(C) && (C === C.prototype.constructor);
+        };
+
         _mustNOTexist("ensureFunc");
         utils.ensureFunc = utils.ensureFunc || function (f, funcName) {
             var sureFunc = f;

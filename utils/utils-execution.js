@@ -90,7 +90,7 @@
          *
          */
         var execUtilFunc = function (obj, methodName, paramList, objectName) {
-            var me          = "Utils::call";
+            var me          = "Utils::exec";
             var returnVal   = undefined;
 
             var doLog       = !utils.empty(objectName);

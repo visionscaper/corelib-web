@@ -54,7 +54,7 @@
         $statics : {
 
             getResponseHeaders : function(xhr) {
-                var me      = "ZeptoJSMixin::getResponseHeaders";
+                var me      = "ZeptoJSAPIMixin::getResponseHeaders";
                 var headers = null;
 
                 if (!_.hasMethod(xhr, 'getAllResponseHeaders')) {
@@ -110,7 +110,7 @@
          * @return {Object}                 request object
          */
         _createRequest : function(method, url, data) {
-            var me = this.getIName() + "::ZeptoJSMixin::_createRequest";
+            var me = this.getIName() + "::ZeptoJSAPIMixin::_createRequest";
 
             if (_.string(method)) {
                 method = method.toLowerCase();
@@ -150,7 +150,7 @@
          * @protected
          */
         _sendRequest : function(req, internalResponseCb) {
-            var me      = this.getIName() + "::ZeptoJSMixin::_sendRequest";
+            var me      = this.getIName() + "::ZeptoJSAPIMixin::_sendRequest";
             var success = false;
 
             internalResponseCb = _.ensureFunc(internalResponseCb);
@@ -166,7 +166,7 @@
             }
 
             req.success = function(data, status, xhr) {
-                internalResponseCb(data, null, status, ZeptoJSMixin.getResponseHeaders(xhr));
+                internalResponseCb(data, null, status, ZeptoJSAPIMixin.getResponseHeaders(xhr));
             };
 
             req.error   = function(xhr, errorType, error) {
@@ -179,7 +179,7 @@
                             status  : xhr.status
                         },
                         xhr.status,
-                        ZeptoJSMixin.getResponseHeaders(xhr));
+                        ZeptoJSAPIMixin.getResponseHeaders(xhr));
             };
 
             $.ajax(req);

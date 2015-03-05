@@ -39,7 +39,7 @@
          * Uses JSON as content type
          *
          * @module          corelib-web
-         * @class           SuperAgentMixin
+         * @class           SuperAgentAPIMixin
          *
          * @for             HTTPAPI
          *
