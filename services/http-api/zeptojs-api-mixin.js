@@ -37,7 +37,7 @@
         Class       = window.jsface.Class;
     }
 
-    NS.ZeptoJSMixin = Class({
+    NS.ZeptoJSAPIMixin = Class({
 
         /**
          *
@@ -45,7 +45,7 @@
          * Uses JSON as content type
          *
          * @module          corelib-web
-         * @class           ZeptoJSMixin
+         * @class           ZeptoJSAPIMixin
          *
          * @for             HTTPAPI
          *

@@ -31,7 +31,7 @@
         Class           = window.jsface.Class;
     }
 
-    NS.SuperAgentMixin = Class({
+    NS.SuperAgentAPIMixin = Class({
 
         /**
          *
