@@ -31,7 +31,14 @@
         }
 
         if ((typeof(utils._utilsComponents) != "object") || (!utils._utilsComponents["base"])) {
-            log.error("UtilsExecution", "This utils component needs the base utils component, not adding execution utils");
+            log.error("UtilsExecution", "This utils component needs the base utils component, " +
+                      "not adding execution utils");
+            return;
+        }
+
+        if ((typeof(utils._utilsComponents) != "object") || (!utils._utilsComponents["strings"])) {
+            log.error("UtilsExecution", "This utils component needs the strings utils component, " +
+                      "not adding execution utils");
             return;
         }
 
@@ -400,7 +407,7 @@
          *  }
          *
          */
-        utils.execASync = function (funcHash, allCallsCompletedCb, forceComplete) {
+        var execASync = function (funcHash, allCallsCompletedCb, forceComplete) {
             var me = "Utils::execASync";
 
             allCallsCompletedCb = utils.ensureFunc(allCallsCompletedCb);
@@ -491,6 +498,137 @@
             }
         };
         utils.execASync = utils.execASync || execASync;
+
+
+        utils._mustNOTexist("iterateASync");
+        /**
+         *
+         * ASynchronously iterates a function.
+         *
+         * Calls function iterFunc(iter, cbIterReady) asynchronously, ramping up iter from 0 to numIter-1
+         * When all calls to iterFunc callback using cbIterReady, cbReady is finally called.
+         *
+         * @param {number} numIter      Number of iterations
+         * @param {function} iterFunc   function(iter, cbIterReady) with cbIterReady(success)
+         * @param {function} [cbReady]  function(success)
+         *
+         */
+        var iterateASync = function(numIter, iterFunc, cbReady) {
+            var me      = "Utils::iterateASync";
+            var success = false;
+
+            cbReady     = utils.ensureFunc(cbReady);
+
+            if ((!utils.number(numIter)) || (numIter < 0)) {
+                log.error(me, "numIter is invalid, unable to iterate asynchronously ({0})".fmt(numIter));
+
+                cbReady(success);
+                return;
+            }
+
+            if (!utils.func(iterFunc)) {
+                log.error(me, "iterFunc is not a function : %@".fmt(utils.stringify(iterFunc)));
+
+                cbReady(success);
+                return;
+            }
+
+            success  = true;
+            if (numIter === 0) {
+                cbReady(success);
+                return;
+            }
+
+            var itersDone = 0;
+            var _cbIter = function(_success) {
+                success = success && _success;
+
+                itersDone++;
+
+                if (itersDone === numIter) {
+                    cbReady(success);
+                } else if (itersDone > numIter) {
+                    log.error(me, "UNEXPECTED : Iteration callback func cbIterReady called too often!! " +
+                                  "Number of iterations = %@".fmt(itersDone));
+                }
+            };
+
+            for (var iter = 0; iter < numIter; iter++) {
+                iterFunc(iter, _cbIter);
+            }
+        };
+        utils.iterateASync = utils.iterateASync || iterateASync;
+
+        utils._mustNOTexist("iterateSync");
+        /**
+         *
+         *
+         * Synchronously iterates a function.
+         *
+         * Calls function iterFunc(iter, cbIterReady) synchronously, ramping up iter from 0 to numIter-1.
+         * Synchronous calling iterFunc implies that iterFunc is called again (with iter = iter+1), after the previous
+         * call has finished. After the last call to iterFunc has called its callback, the cbReady is called with
+         * a success boolean.
+         *
+         * @param {number} numIter                  Number of iterations
+         * @param {function} iterFunc               function(iter, cbIterReady) with cbIterReady(success)
+         * @param {function} [cbReady]              function(success)
+         * @param {boolean} [forceComplete=true]    If true, iterations will continue, even though a iteration
+         *                                          returned with success = false
+         *
+         */
+        var iterateSync = function(numIter, iterFunc, cbReady, forceComplete) {
+            var me      = "ASyncUtils::iterateSync";
+            var success = false;
+
+            cbReady     = utils.ensureFunc(cbReady);
+
+            if ((!utils.number(numIter)) || (numIter < 0)) {
+                log.error(me, "numIter is invalid, unable to iterate asynchronously ({0})".fmt(numIter));
+
+                cbReady(success);
+                return;
+            }
+
+            if (!utils.func(iterFunc)) {
+                log.error(me, "iterFunc is not a function : %@".fmt(utils.stringify(iterFunc)));
+
+                cbReady(success);
+                return;
+            }
+
+            if (!utils.bool(forceComplete)) {
+                forceComplete = true;
+            }
+
+            var iter = 0;
+            success  = true;
+            if (numIter === 0) {
+                cbReady(success);
+                return;
+            }
+
+            var _cbIter = function(_success) {
+                success = success && _success;
+                if ((!success) && (!forceComplete)) {
+                    cbReady(success);
+                    return;
+                }
+
+                iter++;
+                if (iter < numIter) {
+                    iterFunc(iter, _cbIter);
+                } else if (iter === numIter) {
+                    cbReady(success);
+                } else if (iter > numIter) {
+                    log.error(me, "UNEXPECTED : Iteration callback func cbIterReady called too often!! " +
+                                  "Number of iterations = %@".fmt(iter));
+                }
+            };
+
+            iterFunc(iter, _cbIter);
+        };
+        utils.iterateSync = utils.iterateSync || iterateSync;
 
     };
 
