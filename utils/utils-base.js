@@ -112,6 +112,78 @@
             return utils.func(C) && (C === C.prototype.constructor);
         };
 
+        _mustNOTexist("equals");
+        /**
+         *
+         * Returns true if v1 and v2 are equal else false.
+         *
+         * For objects the values of its own properties are compared using ===.
+         * For arrays the item values are compared using ===.
+         *
+         * So for both objects and arrays the equality assessment is only done one level deep.
+         *
+         * @returns {boolean}
+         *
+         */
+        utils.equals = utils.equals || function (v1, v2) {
+            var isDef   = utils.def(v1);
+            var valType = (typeof v1);
+            var isArray = utils.array(v1);
+            var isEqual = (isDef === utils.def(v2)) &&
+                          (valType === (typeof v2)) &&
+                          (isArray === _.array(v2));
+            if (!isEqual) {
+                return isEqual;
+            }
+
+            if (valType === "object") {
+                var val1    = null;
+                var val2    = null;
+
+                var i       = null;
+
+                if (!isArray) {
+                    var propertiesV1 = Object.getOwnPropertyNames(v1);
+                    var propertiesV2 = Object.getOwnPropertyNames(v2);
+
+                    isEqual = propertiesV1.length == propertiesV2.length;
+                    if (!isEqual) {
+                        return isEqual;
+                    }
+
+                    for (i = 0; i < propertiesV1.length; i++) {
+                        val1 = v1[propertiesV1[i]];
+                        val2 = v2[propertiesV1[i]];
+                        isEqual = isEqual && (val1 === val2);
+                        if (!isEqual) {
+                            return isEqual;
+                        }
+                    }
+
+                    return isEqual;
+                } else {
+                    isEqual = (v1.length != v2.length);
+                    if (isEqual) {
+                        return isEqual;
+                    }
+
+                    for (i = 0; i < v1.length; i++) {
+                        val1 = v1[i];
+                        val2 = v2[i];
+                        isEqual = isEqual && (val1 === val2);
+                        if (!isEqual) {
+                            return isEqual;
+                        }
+                    }
+
+                    return isEqual;
+                }
+            }
+
+            isEqual = (v1 === v2);
+            return isEqual;
+        };
+
         _mustNOTexist("ensureFunc");
         utils.ensureFunc = utils.ensureFunc || function (f, funcName) {
             var sureFunc = f;
