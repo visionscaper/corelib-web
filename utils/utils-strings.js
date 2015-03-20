@@ -27,12 +27,12 @@
         }
 
         if ((typeof(utils) != "object") && (typeof(utils) != "function")) {
-            log.error("UtilsStrings", "No valid utils object given, not adding execution utils");
+            log.error("UtilsStrings", "No valid utils object given, not adding utils");
             return;
         }
 
         if ((typeof(utils._utilsComponents) != "object") || (!utils._utilsComponents["base"])) {
-            log.error("UtilsStrings", "This utils component needs the base utils component, not adding execution utils");
+            log.error("UtilsStrings", "This utils component needs the base utils component, not adding utils");
             return;
         }
 
@@ -46,7 +46,7 @@
         //This allows us to check in a simple way if certain functionality is available
         utils._mustExist("_utilsComponents");
         if (utils.obj(utils._utilsComponents)) {
-            utils._utilsComponents["strings"] = true;
+            utils._utilsComponents["vrmaster"] = true;
         }
 
         /**************************************************

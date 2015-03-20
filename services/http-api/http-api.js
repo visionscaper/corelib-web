@@ -57,7 +57,10 @@
 
     NS.HTTPAPI = Class(NamedBase, {
 
-        _APIURL : null,
+        _APIURL     : null,
+
+        //set with onBusy(), called when request starts _onBusyFunc(true) and _onBusyFunc(false)
+        _onBusyFunc : null,
 
         /**
          *
@@ -81,6 +84,17 @@
             this._valid     = true;
 
             this._APIURL    = APIURL;
+        },
+
+        /**
+         *
+         * Sets a listener function which is called every time a requests starts onBusy(true) and when
+         * a response is received onBusy(false)
+         *
+         * @param onBusyFunc
+         */
+        onBusy : function(onBusyFunc) {
+            this._onBusyFunc = onBusyFunc;
         },
 
         /**
@@ -192,6 +206,8 @@
 
             this._willSendRequest(req);
 
+            _.ensureFunc(this._onBusyFunc)(true);
+
             return this._sendRequest(req, function(data, err, status, headers) {
                 if (!_.def(err)) {
                     //SUCCESS
@@ -202,6 +218,8 @@
                     //Call _onRequestError with all provided params
                     self._onErrorResponse.call(self, err, status, headers);
                 }
+
+                _.ensureFunc(this._onBusyFunc)(false);
 
                 responseCb(data, err, status);
             });
