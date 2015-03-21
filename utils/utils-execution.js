@@ -464,7 +464,7 @@
             };
 
             var __createFuncReadyCb = function (funcName) {
-                return function (err) {
+                return function(err) {
                     var _err = err;
                     log.debug(me, "Executing [{0}] READY".fmt(funcName));
 
@@ -473,8 +473,6 @@
                             message: "[{0}] function reported ERROR".fmt(funcName),
                             originalError: err
                         };
-
-                        log.error(me, _err.message, _err.originalError);
 
                         funcErr[funcName] = _err;
                     }
