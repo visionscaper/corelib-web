@@ -123,11 +123,12 @@
             }
 
             return {
-                type        : method,
-                url         : url,
-                data        : _.stringify(data, null, 0),
-                contentType : "application/json",
-                dataType    : "json"
+                type            : method,
+                url             : url,
+                data            : _.stringify(data, null, 0),
+                contentType     : "application/json",
+                dataType        : "json",
+                beforeSend      : function(xhr) { xhr.withCredentials = true },
             };
         },
 
