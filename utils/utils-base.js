@@ -127,9 +127,15 @@
          */
         utils.equals = utils.equals || function (v1, v2) {
             var isDef   = utils.def(v1);
+            var isDef2  = utils.def(v2);
+
+            if (!isDef && !isDef2) {
+                return true;
+            }
+
             var valType = (typeof v1);
             var isArray = utils.array(v1);
-            var isEqual = (isDef === utils.def(v2)) &&
+            var isEqual = (isDef === isDef2) &&
                           (valType === (typeof v2)) &&
                           (isArray === _.array(v2));
             if (!isEqual) {
@@ -163,7 +169,7 @@
                     return isEqual;
                 } else {
                     isEqual = (v1.length != v2.length);
-                    if (isEqual) {
+                    if (!isEqual) {
                         return isEqual;
                     }
 
@@ -315,12 +321,16 @@
         };
 
         _mustNOTexist("stringify");
-        utils.stringify = utils.stringify || function(obj) {
+        utils.stringify = utils.stringify || function(obj, replacer, space) {
             var me  = "Utils::stringify";
+
+            if (!_.def(space)) {
+                space = 4;
+            }
 
             var s   = null;
             try {
-                s = JSON.stringify(obj);
+                s = JSON.stringify.call(JSON, obj, replacer, space);
             } catch(e) {
                 log.error(me, "Unable to stringify object : ", utils.get(e, "message"));
                 s = "[Unable to stringify object]";
