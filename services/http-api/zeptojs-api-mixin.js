@@ -113,9 +113,9 @@
             var me = this.getIName() + "::ZeptoJSAPIMixin::_createRequest";
 
             if (_.string(method)) {
-                method = method.toLowerCase();
-                if (method == "del") {
-                    method = "delete";
+                method = method.toUpperCase();
+                if (method == "DEL") {
+                    method = "DELETE";
                 }
             } else {
                 _l.error(me, "No valid request method provided, unable to create request object.");
@@ -125,7 +125,7 @@
             return {
                 type        : method,
                 url         : url,
-                data        : data,
+                data        : _.stringify(data, null, 0),
                 contentType : "application/json",
                 dataType    : "json"
             };
@@ -172,12 +172,25 @@
             req.error   = function(xhr, errorType, error) {
                 xhr = xhr || {};
 
+                var status  = xhr.status;
+                var data    = null;
+                try {
+                    data = JSON.parse(xhr.responseText);
+                } catch(e) {
+                    _l.error(me, "Unable to JSON parse {0} error response text".fmt(xhr.status));
+                    data = {
+                        message : "Unkown error, {0} error response could not be JSON parsed".fmt(xhr.status),
+                        status  : status
+                    };
+                }
+
+                if (!_.def(data.status)) {
+                    data.status = status;
+                }
+
                 internalResponseCb(
                         null,
-                        {
-                            message : xhr.responseText,
-                            status  : xhr.status
-                        },
+                        data,
                         xhr.status,
                         ZeptoJSAPIMixin.getResponseHeaders(xhr));
             };

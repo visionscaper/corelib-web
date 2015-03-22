@@ -324,7 +324,7 @@
         utils.stringify = utils.stringify || function(obj, replacer, space) {
             var me  = "Utils::stringify";
 
-            if (!_.def(space)) {
+            if (!utils.def(space)) {
                 space = 4;
             }
 
