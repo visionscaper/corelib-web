@@ -219,7 +219,7 @@
                     self._onErrorResponse.call(self, err, status, headers);
                 }
 
-                _.ensureFunc(this._onBusyFunc)(false);
+                _.ensureFunc(self._onBusyFunc)(false);
 
                 responseCb(data, err, status);
             });
