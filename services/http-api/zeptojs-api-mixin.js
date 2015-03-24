@@ -175,13 +175,20 @@
 
                 var status  = xhr.status;
                 var data    = null;
-                try {
-                    data = JSON.parse(xhr.responseText);
-                } catch(e) {
-                    _l.error(me, "Unable to JSON parse {0} error response text".fmt(xhr.status));
+                if (errorType != "abort") {
+                    try {
+                        data = JSON.parse(xhr.responseText);
+                    } catch(e) {
+                        _l.error(me, "Unable to JSON parse {0} error response text".fmt(xhr.status));
+                        data = {
+                            message : "Unkown error, error response (status : {0}) could not be JSON parsed".fmt(xhr.status),
+                            originalError : error
+                        };
+                    }
+                } else {
                     data = {
-                        message : "Unkown error, {0} error response could not be JSON parsed".fmt(xhr.status),
-                        status  : status
+                        message : "Request aborted, do you have an Internet connection? Service might also be offline.",
+                        originalError : error
                     };
                 }
 
