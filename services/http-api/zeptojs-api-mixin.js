@@ -125,12 +125,33 @@
             return {
                 type            : method,
                 url             : url,
-                data            : _.stringify(data, null, 0),
+                data            : _.def(data) ? ((method == "GET") ? $.param(data) : _.stringify(data, null, 0)) : null,
                 contentType     : "application/json",
                 dataType        : "json",
                 beforeSend      : function(xhr) { xhr.withCredentials = true },
             };
         },
+
+        _setRequestHeader : function(req, headerName, headerValue) {
+            var me      = this.getIName() + "::SuperAgentMixin::_setRequestHeader";
+            var success = false;
+
+            if (!_.obj(req)) {
+                _l.error(me, "Provided request is invalid unable to set header [{0}]".fmt(headerName));
+                return success;
+            }
+
+            if (!_.string(headerName) || (_.empty(headerName))) {
+                _l.error(me, "Provided header name is not valid, unable to set header".fmt(headerName));
+                return success;
+            }
+
+            req.headers = req.headers || {};
+            req.headers[headerName] = headerValue;
+
+            return (success = true);
+        },
+
 
         /**
          *
