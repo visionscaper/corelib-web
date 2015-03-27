@@ -75,6 +75,9 @@
          *
          * @param {String} APIName      Name of API
          * @param {String} APIURL       Base URL of API
+         * @param {Object} [config]     Configuration object, see Configurable mixin
+         *                              By default this object is not used, but may be used when a mixin
+         *                              is used together with this class
          *
          */
         constructor: function (APIName, APIURL) {
@@ -259,6 +262,26 @@
 
         /**
          *
+         * @param {object} req          Request object
+         * @param {string} headerName   Name of header field
+         * @param {string} headerValue  Header value to set
+         *
+         * @returns {boolean}           True when setting the header was successful, else false
+         *
+         * @protected
+         *
+         */
+        _setRequestHeader : function(req, headerName, headerValue) {
+            var me = this.getIName() + "::_setRequestHeader";
+
+            _l.error(me, "Method to set request header not implemented. " +
+                         "Please override this method in order to send requests");
+
+            return false;
+        },
+
+        /**
+         *
          * Called just before the request is send
          *
          * @param {object} request    request to be sent
@@ -328,7 +351,8 @@
          * @param {Object} headers                        Response headers
          *
          */
-        _onErrorResponse : function(err, status, headers) {}
+        _onErrorResponse : function(err, status, headers) {},
+
         /*************** END METHODS TO OVERRIDE ***************/
     });
 })();
