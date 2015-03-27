@@ -85,6 +85,24 @@
             }
         },
 
+        _setRequestHeader : function(req, headerName, headerValue) {
+            var me      = this.getIName() + "::SuperAgentMixin::_setRequestHeader";
+            var success = false;
+
+            if (!_.hasMethod(req, "set")) {
+                _l.error(me, "Provided request is invalid unable to set header [{0}]".fmt(headerName));
+                return success;
+            }
+
+            if (!_.string(headerName) || (_.empty(headerName))) {
+                _l.error(me, "Provided header name is not valid, unable to set header".fmt(headerName));
+                return success;
+            }
+
+            req.set(headerName, headerValue);
+            return (success = true);
+        },
+
         /**
          *
          * Method that sends requests
