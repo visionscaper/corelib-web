@@ -351,7 +351,7 @@
          * @param {Object} headers                        Response headers
          *
          */
-        _onErrorResponse : function(err, status, headers) {},
+        _onErrorResponse : function(err, status, headers) {}
 
         /*************** END METHODS TO OVERRIDE ***************/
     });

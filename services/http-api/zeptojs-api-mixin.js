@@ -128,7 +128,7 @@
                 data            : _.def(data) ? ((method == "GET") ? $.param(data) : _.stringify(data, null, 0)) : null,
                 contentType     : "application/json",
                 dataType        : "json",
-                beforeSend      : function(xhr) { xhr.withCredentials = true },
+                beforeSend      : function(xhr) { xhr.withCredentials = true; }
             };
         },
 
