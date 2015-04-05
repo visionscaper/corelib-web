@@ -168,7 +168,7 @@
 
                     return isEqual;
                 } else {
-                    isEqual = (v1.length != v2.length);
+                    isEqual = (v1.length == v2.length);
                     if (!isEqual) {
                         return isEqual;
                     }
