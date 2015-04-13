@@ -350,6 +350,13 @@
             var _u = Logging.Logger.utils;
 
             level = level || Logging.Logger.infoLevel;
+            var logFunc = _u.ensureFunc(this._logFunc[level]);
+
+            if ((!_u.string(me)) && (!_u.string(message))) {
+                logFunc.apply(console);
+                return;
+            }
+
             message = message || "[NO MESSAGE GIVEN]";
 
             var levelName       = this._levelNames[level];
@@ -385,7 +392,6 @@
                 logArgs.unshift(preFix);
             }
 
-            var logFunc = _u.ensureFunc(this._logFunc[level]);
             logFunc.apply(console, logArgs);
         }
 
