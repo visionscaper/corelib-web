@@ -179,6 +179,29 @@
             return encodedStr;
         };
         utils.encoded = utils.encoded || encoded;
+
+        String.prototype.endsWith = function(suffix) {
+            return this.indexOf(suffix, this.length - suffix.length) !== -1;
+        };
+
+        utils._mustNOTexist("endsWith");
+        /**
+         *
+         * Checks if string ends with string
+         *
+         * @param {String} s
+         *
+         * @returns {boolean}
+         *
+         */
+        var endsWith = function(s, suffix) {
+            if (!utils.string(s)) {
+                return false;
+            }
+
+            return s.indexOf(suffix, s.length-suffix.length) !== -1;
+        };
+        utils.endsWith = utils.endsWith || endsWith;
     };
 
 })();
