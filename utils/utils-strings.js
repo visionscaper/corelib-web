@@ -199,7 +199,7 @@
                 return false;
             }
 
-            return s.indexOf(suffix, s.length-suffix.length) !== -1;
+            return s.length >= suffix.length && s.substr(s.length - suffix.length) == suffix;
         };
         utils.endsWith = utils.endsWith || endsWith;
     };
