@@ -202,6 +202,58 @@
             return s.length >= suffix.length && s.substr(s.length - suffix.length) == suffix;
         };
         utils.endsWith = utils.endsWith || endsWith;
+
+        utils._mustNOTexist("toBase64");
+        /**
+         *
+         * Converts binary string to Base64 ASCII encoded string
+         *
+         * @param {string} data         string with binary data
+         *
+         * @returns {string | null}     If a problem occurred null is returned
+         *
+         */
+        var toBase64 = function(data) {
+            var data64 = null;
+
+            if (!_.string(data)) {
+                return data64;
+            }
+
+            if (!_.func(window.btoa)) {
+                _l.error("Utils::toBase64", "btoa method not supported to encode as Base64");
+                return data64;
+            }
+
+            return (data64 = window.btoa(data));
+        };
+        utils.toBase64 = utils.toBase64 || toBase64;
+
+        utils._mustNOTexist("fromBase64");
+        /**
+         *
+         * Converts Base64 ASCII encoded string to binary string
+         *
+         * @param {string} data64       string with Base64 ASCII encoded  data
+         *
+         * @returns {string | null}     If a problem occurred null is returned
+         *
+         */
+        var fromBase64 = function(data64) {
+            var data = null;
+
+            if (!_.string(data64)) {
+                return data;
+            }
+
+            if (!_.func(window.atob)) {
+                _l.error("Utils::fromBase64", "atob method not supported to decode Base64");
+                return data;
+            }
+
+            return (data = window.atob(data64));
+        };
+        utils.fromBase64 = utils.fromBase64 || fromBase64;
     };
 
 })();

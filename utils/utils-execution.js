@@ -547,7 +547,7 @@
                     cbReady(success);
                 } else if (itersDone > numIter) {
                     log.error(me, "UNEXPECTED : Iteration callback func cbIterReady called too often!! " +
-                                  "Number of iterations = %@".fmt(itersDone));
+                                  "Number of iterations = {0}".fmt(itersDone));
                 }
             };
 
