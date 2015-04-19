@@ -242,18 +242,61 @@
         var fromBase64 = function(data64) {
             var data = null;
 
-            if (!_.string(data64)) {
+            if (!utils.string(data64)) {
                 return data;
             }
 
-            if (!_.func(window.atob)) {
-                _l.error("Utils::fromBase64", "atob method not supported to decode Base64");
+            if (!utils.func(window.atob)) {
+                log.error("Utils::fromBase64", "atob method not supported to decode Base64");
                 return data;
             }
 
             return (data = window.atob(data64));
         };
         utils.fromBase64 = utils.fromBase64 || fromBase64;
+
+        utils._mustNOTexist("insertBeforeLast");
+        /**
+         *
+         * Places insert before last occurrence of string c in s
+         * If the specified string c does not occur at all in s, string insert is placed at the end of s
+         *
+         * Example :
+         * insertBeforeLast('.', '-original', 'test.x.jpg') returns "test.x-original.jpg"
+         *
+         * @param {string} c        Substring where to insert string 'insert' before
+         * @param {string} insert   String to insert before last occurrence of c in s
+         * @param {string} s        String to insert string 'insert' in to
+         *
+         * @returns {string|null}
+         */
+        var insertBeforeLast = function(c, insert, s) {
+            var me          = "Utils::insertBeforeLast";
+            var sInserted   = null;
+
+            if (!utils.string(s)) {
+                return sInserted;
+            }
+
+            if (!utils.string(insert)) {
+                log.error(me, "insert is not a string, returning null");
+                return sInserted;
+            }
+
+            if (!utils.string(c)) {
+                return (sInserted = s+insert);
+            }
+
+            var idx = s.lastIndexOf(c);
+            if (idx < 0) {
+                sInserted = s+insert;
+            } else {
+                sInserted = s.substring(0, idx) + insert + s.substring(idx)
+            }
+
+            return sInserted;
+        };
+        utils.insertBeforeLast = utils.insertBeforeLast || insertBeforeLast;
     };
 
 })();

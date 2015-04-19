@@ -3,16 +3,21 @@
  */
 
 (function() {
-    var NS = null;
+    var NS      = null;
+    var DataMap = null;
 
     var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
     if (__isNode) {
         require("./../extensions/string.ext.js");
 
+        DataMap = require("../data-structures/data-map.js").DataMap;
+
         NS = exports;
     } else {
         //Add to Visionscapers namespace
         NS = window["__VI__"] || window;
+
+        DataMap = NS.DataMap;
     }
 
     //using underscore.js _ as base object
@@ -120,6 +125,8 @@
          * For objects the values of its own properties are compared using ===.
          * For arrays the item values are compared using ===.
          *
+         * This function can also compare DataMap structures
+         *
          * So for both objects and arrays the equality assessment is only done one level deep.
          *
          * @returns {boolean}
@@ -133,11 +140,14 @@
                 return true;
             }
 
-            var valType = (typeof v1);
-            var isArray = utils.array(v1);
+            var valType     = (typeof v1);
+            var isArray     = utils.array(v1);
+            var isDataMap   = v1 instanceof DataMap;
             var isEqual = (isDef === isDef2) &&
                           (valType === (typeof v2)) &&
-                          (isArray === _.array(v2));
+                          (isArray === utils.array(v2)) &&
+                          (isDataMap === (v2 instanceof DataMap));
+
             if (!isEqual) {
                 return isEqual;
             }
@@ -148,7 +158,7 @@
 
                 var i       = null;
 
-                if (!isArray) {
+                if (!isArray && !isDataMap) {
                     var propertiesV1 = Object.getOwnPropertyNames(v1);
                     var propertiesV2 = Object.getOwnPropertyNames(v2);
 
@@ -167,7 +177,28 @@
                     }
 
                     return isEqual;
+                } else if (isDataMap) {
+                    var propertiesV1 = v1.getAllKeys();
+                    var propertiesV2 = v2.getAllKeys();
+
+                    isEqual = propertiesV1.length == propertiesV2.length;
+                    if (!isEqual) {
+                        return isEqual;
+                    }
+
+                    for (i = 0; i < propertiesV1.length; i++) {
+                        val1 = v1.get(propertiesV1[i]);
+                        val2 = v2.get(propertiesV1[i]);
+                        isEqual = isEqual && (val1 === val2);
+                        if (!isEqual) {
+                            return isEqual;
+                        }
+                    }
+
+                    return isEqual;
                 } else {
+                    //Array
+
                     isEqual = (v1.length == v2.length);
                     if (!isEqual) {
                         return isEqual;
