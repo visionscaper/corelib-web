@@ -188,6 +188,7 @@
             }
 
             req.success = function(data, status, xhr) {
+                status = xhr.status;
                 internalResponseCb(data, null, status, ZeptoJSAPIMixin.getResponseHeaders(xhr));
             };
 
