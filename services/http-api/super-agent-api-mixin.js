@@ -1,5 +1,8 @@
 /**
  * Created by Freddy Snijder on 14/12/14.
+ * 
+ * WARNING : DON'T USE, NOT WORKING PROPERLY YET
+ * 
  */
 (function() {
     var NS              = null;
