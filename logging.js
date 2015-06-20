@@ -18,7 +18,7 @@
 
     } else {
         //Add to Visionscapers namespace
-        NS = window["__VI__"] || window;
+        NS = window.__VI__ || window;
 
         Class  = window.jsface.Class;
     }
@@ -38,7 +38,7 @@
 
     Logging.Logger = Class({
 
-        $statics        : {
+        "$statics"        : {
             noLogging       : Logging.LoggingLevel.NO_LOGGING,
             errorLevel      : Logging.LoggingLevel.ERROR,
             warnLevel       : Logging.LoggingLevel.WARN,

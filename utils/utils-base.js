@@ -15,7 +15,7 @@
         NS = exports;
     } else {
         //Add to Visionscapers namespace
-        NS = window["__VI__"] || window;
+        NS = window.__VI__ || window;
 
         DataMap = NS.DataMap;
     }
@@ -39,21 +39,23 @@
         //Using these functions (in the particular way as used below) to ensure that Webstorm (or other IDE) can find
         // the method definition, while still providing feedback when a method already exists
 
-        var _mustNOTexist = function (name) {
-            if ((utils[name] !== null) && (utils[name] !== undefined)) {
-                log.warn("UtilsBase", "property or method {0} already exists, not overwriting".fmt(name));
+        var _mustNOTexist = function(p, name) {
+            if ((p !== null) && (p !== undefined)) {
+                log.warn("UtilsBase", "property or method {0} already exists, not overwriting"
+                         .fmt(name || "[UNKNOWN PROPERTY NAME]"));
             }
         };
-        var _mustExist = function (name) {
-            if ((utils[name] === null) || (utils[name] === undefined)) {
-                log.error("UtilsBase", "property or method {0} does not exists, will not be available".fmt(name));
+        var _mustExist = function(p, name) {
+            if ((p === null) || (p === undefined)) {
+                log.error("UtilsBase", "property or method {0} does not exists, will not be available"
+                         .fmt(name || "[UNKNOWN PROPERTY NAME]"));
             }
         };
 
-        _mustNOTexist("_mustNOTexist");
+        _mustNOTexist(utils._mustNOTexist, "_mustNOTexist");
         utils._mustNOTexist = utils._mustNOTexist || _mustNOTexist;
 
-        _mustNOTexist("_mustExist");
+        _mustNOTexist(utils._mustExist, "_mustExist");
         utils._mustExist = utils._mustExist || _mustExist;
 
         /**************************************************
@@ -64,7 +66,7 @@
 
         //Different util components are registered here
         //This allows us to check in a simple way if certain functionality is available
-        _mustNOTexist("_utilsComponents");
+        _mustNOTexist(utils._utilsComponents, "_utilsComponents");
         utils._utilsComponents = utils._utilsComponents || {
             base: true
         };
@@ -75,49 +77,49 @@
          *
          **************************************************/
 
-        _mustNOTexist("def");
+        _mustNOTexist(utils.def, "def");
         utils.def = utils.def || function (v) {
             return ((v !== null) && (v !== undefined));
         };
 
-        _mustNOTexist("obj");
-        _mustExist("isObject");
+        _mustNOTexist(utils.obj, "obj");
+        _mustExist(utils.isObject, "isObject");
         utils.obj = utils.obj || utils.isObject;
 
-        _mustNOTexist("bool");
-        _mustExist("isBoolean");
+        _mustNOTexist(utils.bool, "bool");
+        _mustExist(utils.isBoolean, "isBoolean");
         utils.bool = utils.bool || utils.isBoolean;
 
-        _mustNOTexist("number");
-        _mustExist("isNumber");
+        _mustNOTexist(utils.number, "number");
+        _mustExist(utils.isNumber, "isNumber");
         utils.number = utils.number || utils.isNumber;
 
-        _mustNOTexist("string");
-        _mustExist("isString");
+        _mustNOTexist(utils.string, "string");
+        _mustExist(utils.isString, "isString");
         utils.string = utils.string || utils.isString;
 
-        _mustNOTexist("array");
-        _mustExist("isArray");
+        _mustNOTexist(utils.array, "array");
+        _mustExist(utils.isArray, "isArray");
         utils.array = utils.array || utils.isArray;
 
-        _mustNOTexist("func");
-        _mustExist("isFunction");
+        _mustNOTexist(utils.func, "func");
+        _mustExist(utils.isFunction, "isFunction");
         utils.func = utils.func || utils.isFunction;
 
-        _mustNOTexist("date");
-        _mustExist("isDate");
+        _mustNOTexist(utils.date, "date");
+        _mustExist(utils.isDate, "isDate");
         utils.date = utils.date || utils.isDate;
 
-        _mustNOTexist("empty");
-        _mustExist("isEmpty");
+        _mustNOTexist(utils.empty, "empty");
+        _mustExist(utils.isEmpty, "isEmpty");
         utils.empty = utils.empty || utils.isEmpty;
 
-        _mustNOTexist("class");
+        _mustNOTexist(utils.class, "class");
         utils.class = utils.class || function (C) {
             return utils.func(C) && (C === C.prototype.constructor);
         };
 
-        _mustNOTexist("equals");
+        _mustNOTexist(utils.equals, "equals");
         /**
          *
          * Returns true if v1 and v2 are equal else false.
@@ -221,7 +223,7 @@
             return isEqual;
         };
 
-        _mustNOTexist("ensureFunc");
+        _mustNOTexist(utils.ensureFunc, "ensureFunc");
         utils.ensureFunc = utils.ensureFunc || function (f, funcName) {
             var sureFunc = f;
             if (!utils.func(sureFunc)) {
@@ -234,12 +236,12 @@
             return sureFunc;
         };
 
-        _mustNOTexist("now");
+        _mustNOTexist(utils.now, "now");
         utils.now = utils.now || function () {
             return (new Date()).getTime();
         };
 
-        _mustNOTexist("get");
+        _mustNOTexist(utils.get, "get");
         utils.get = utils.get || function (obj, path, objName) {
             var me      = "Utils::get";
             var value    = null;
@@ -293,7 +295,7 @@
             return value;
         };
 
-        _mustNOTexist("set");
+        _mustNOTexist(utils.set, "set");
         utils.set = utils.set || function (obj, path, value, objName) {
             var me = "utils::set";
             var success = false;
@@ -351,7 +353,7 @@
             return success;
         };
 
-        _mustNOTexist("stringify");
+        _mustNOTexist(utils.stringify, "stringify");
         utils.stringify = utils.stringify || function(obj, replacer, space) {
             var me  = "Utils::stringify";
 

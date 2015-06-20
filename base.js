@@ -16,7 +16,7 @@
         NS = exports;
     } else {
         //Add to Visionscapers namespace
-        NS = window["__VI__"] || window;
+        NS = window.__VI__ || window;
 
         Class  = window.jsface.Class;
     }

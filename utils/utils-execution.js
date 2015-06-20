@@ -12,7 +12,7 @@
         NS = exports;
     } else {
         //Add to Visionscapers namespace
-        NS = window["__VI__"] || window;
+        NS = window.__VI__ || window;
     }
 
     //using underscore.js _ as base object
@@ -30,13 +30,13 @@
             return;
         }
 
-        if ((typeof(utils._utilsComponents) != "object") || (!utils._utilsComponents["base"])) {
+        if ((typeof(utils._utilsComponents) != "object") || (!utils._utilsComponents.base)) {
             log.error("UtilsExecution", "This utils component needs the base utils component, " +
                       "not adding execution utils");
             return;
         }
 
-        if ((typeof(utils._utilsComponents) != "object") || (!utils._utilsComponents["strings"])) {
+        if ((typeof(utils._utilsComponents) != "object") || (!utils._utilsComponents.strings)) {
             log.error("UtilsExecution", "This utils component needs the strings utils component, " +
                       "not adding execution utils");
             return;
@@ -50,9 +50,9 @@
 
         //Different util components are registered here
         //This allows us to check in a simple way if certain functionality is available
-        utils._mustExist("_utilsComponents");
+        utils._mustExist(utils._utilsComponents, "_utilsComponents");
         if (utils.obj(utils._utilsComponents)) {
-            utils._utilsComponents["execution"] = true;
+            utils._utilsComponents.execution = true;
         }
 
         /**************************************************
@@ -61,7 +61,7 @@
          *
          **************************************************/
 
-        utils._mustNOTexist("hasMethod");
+        utils._mustNOTexist(utils.hasMethod, "hasMethod");
         /**
          *
          * Checks if an object has method named methodName
@@ -77,7 +77,7 @@
         };
         utils.hasMethod = utils.hasMethod || hasMethod;
 
-        utils._mustNOTexist("exec");
+        utils._mustNOTexist(utils.exec, "exec");
         /**
          *
          * Executes method with name methodName on obj with params paramList
@@ -118,7 +118,7 @@
         };
         utils.exec = utils.exec || execUtilFunc;
 
-        utils._mustNOTexist("interfaceAdheres");
+        utils._mustNOTexist(utils.interfaceAdheres, "interfaceAdheres");
         /**
          *
          * Checks if object obj adheres to interface defined by interfaceDef
@@ -207,7 +207,7 @@
 
         utils.interfaceAdheres = utils.interfaceAdheres || interfaceAdheres;
 
-        utils._mustNOTexist("execInSeries");
+        utils._mustNOTexist(utils.execInSeries, "execInSeries");
         /**
          *
          * Executes all functions in funcHash in series and returns when all functions have called back.
@@ -350,7 +350,7 @@
         };
         utils.execInSeries = utils.execInSeries || execInSeries;
 
-        utils._mustNOTexist("execASync");
+        utils._mustNOTexist(utils.execASync, "execASync");
         /**
          *
          * Executes all functions in funcHash ASYNChronously and calls
@@ -498,7 +498,7 @@
         utils.execASync = utils.execASync || execASync;
 
 
-        utils._mustNOTexist("iterateASync");
+        utils._mustNOTexist(utils.iterateASync, "iterateASync");
         /**
          *
          * ASynchronously iterates a function.
@@ -557,7 +557,7 @@
         };
         utils.iterateASync = utils.iterateASync || iterateASync;
 
-        utils._mustNOTexist("iterateSync");
+        utils._mustNOTexist(utils.iterateSync, "iterateSync");
         /**
          *
          *
