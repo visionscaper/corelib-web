@@ -62,7 +62,7 @@
             }
             
             // Set defaults for undefined properties
-            if(!_.obj(defaults)) {
+            if (_.obj(defaults)) {
                 var props = Object.getOwnPropertyNames(defaults);
                 for (var propIdx in props) {
                     var prop            = props[propIdx];
