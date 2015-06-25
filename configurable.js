@@ -39,27 +39,38 @@
          * Properties are only added when the property resolves to undefined.
          *
          * @param {Object} config       Object that contains properties to add to the instance
-         *
+         * @param {Object} defaults     Object that contains default values for undefined config properties.
          * @protected
          *
          */
-        _addConfigProperties : function(config) {
+        _addConfigProperties : function(config, defaults) {
             var me = "[{0}]Configurable::_addConfigProperties".fmt(_.exec(this, 'getIName') || '[UNKOWN]');
 
-            if (!_.obj(config)) {
-                //Nothing to do
-                return;
+            // Copy config properties
+            if (_.obj(config)) {
+                var props = Object.getOwnPropertyNames(config);
+                for (var propIdx in props) {
+                    var prop            = props[propIdx];
+                    var instanceProp    = "_" + prop;
+
+                    if (this[instanceProp] === undefined) {
+                        this[instanceProp] = config[prop];
+                    } else {
+                        _l.debug(me, "Skipping property {0} because it already exists in instance".fmt(instanceProp))
+                    }
+                }
             }
+            
+            // Set defaults for undefined properties
+            if(!_.obj(defaults)) {
+                var props = Object.getOwnPropertyNames(defaults);
+                for (var propIdx in props) {
+                    var prop            = props[propIdx];
+                    var instanceProp    = "_" + prop;
 
-            var props = Object.getOwnPropertyNames(config);
-            for (var propIdx in props) {
-                var prop            = props[propIdx];
-                var instanceProp    = "_" + prop;
-
-                if (this[instanceProp] === undefined) {
-                    this[instanceProp] = config[prop];
-                } else {
-                    _l.debug(me, "Skipping property {0} because it already exists in instance".fmt(instanceProp))
+                    if (this[instanceProp] === undefined) {
+                        this[instanceProp] = defaults[prop];
+                    }
                 }
             }
         }
