@@ -368,7 +368,12 @@
             }
 
             return s;
-        }
+        };
+        
+        _mustNOTexist("_parsableToNumber");
+        utils.parsableToNumber = utils.parsableToNumber || function(number) {
+            return !isNaN(number);
+        };
     };
 
 })();
