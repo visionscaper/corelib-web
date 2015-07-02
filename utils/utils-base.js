@@ -370,9 +370,39 @@
             return s;
         };
         
-        _mustNOTexist("_parsableToNumber");
+        _mustNOTexist("parsableToNumber");
         utils.parsableToNumber = utils.parsableToNumber || function(number) {
             return !isNaN(number);
+        };
+        
+        _mustNOTexist("removeFrom");
+        utils.removeFrom = utils.removeFrom || function(from, element, description) {
+            var me  = "Utils::removeFrom";
+            
+            var removed = false;
+            
+            if(!utils.array(from)) {
+                if(utils.def(description)) {
+                    log.warn(me, "Cannot remove element. [{0}] is not an array.".fmt(description));
+                }
+                return -1;
+            }
+            if(!utils.def(element)) {
+                if(utils.def(description)) {
+                    log.warn(me, "Cannot remove undefined element from [{0}].");
+                }
+                return -1;
+            }
+            
+            // Remove all references to the element
+            for(var i in from) {
+                if(from[i] === element) {
+                    delete from[i];
+                    removed++;
+                }
+            }
+            
+            return removed;
         };
     };
 
