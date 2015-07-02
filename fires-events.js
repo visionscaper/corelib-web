@@ -39,8 +39,10 @@
                  // Nothing to do
                  return;
              }
+
+             var handlerDesc = "{0} event handler".fmt(event);
              for(var i in this._handlers[event]) {
-                 this._handlers[event](data);
+                 _.ensureFunc(this._handlers[event][i], handlerDesc)(data);
              }
          },
          
