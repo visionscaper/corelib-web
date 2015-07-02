@@ -404,6 +404,11 @@
             
             return removed;
         };
+        
+        _mustNOTexist("int");
+        utils.int = utils.int || function(arg) {
+            return utils.number(arg) && (arg % 1 === 0);
+        };
     };
 
 })();
