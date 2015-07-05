@@ -35,14 +35,15 @@
           * @returns {undefined}
           */
          event: function(event, data) {
-             if(!_.def(this._handlers) || !_.isArray(this._handlers[event])) {
+             var handlerList = _.obj(this._handlers) ? this._handlers[event] : null;
+             if(!_.isArray(handlerList)) {
                  // Nothing to do
                  return;
              }
 
-             var handlerDesc = "{0} event handler".fmt(event);
-             for(var i in this._handlers[event]) {
-                 _.ensureFunc(this._handlers[event][i], handlerDesc)(data);
+             var i = handlerList.length;
+             while (i--) {
+                 handlerList[i](data);
              }
          },
          
@@ -54,13 +55,31 @@
           * @returns {undefined}
           */
          on: function(event, func) {
-             if(!_.def(this._handlers)) {
+             var iName   = _.exec(this, "getIName") || "UNKNOWN INSTANCE";
+             var me      = "[{}]FiresEvents::on".fmt(iName);
+
+             var success = false;
+
+             if (_.empty(event)) {
+                 _l.error(me, ("Given event name is not valid, " +
+                               "unable to add handler for event").fmt(event));
+                 return success;
+             }
+             if (!_.func(func)) {
+                 _l.error(me, ("Given event handler is not a function, " +
+                 "unable to add handler for event [{0}]").fmt(event));
+                 return success;
+             }
+
+             if(!_.obj(this._handlers)) {
                  this._handlers = {};
              }
              if(!_.isArray(this._handlers[event])) {
                  this._handlers[event] = [];
              }
+
              this._handlers[event].push(func);
+             return (success = true);
          }
 
         /***************************************************
