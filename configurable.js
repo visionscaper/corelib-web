@@ -5,12 +5,31 @@
 (function() {
 
     //Add to Visionscapers namespace
-    var NS          = window.__VI__ || window;
+    var NS              = null;
 
-    var _           = NS.utils;
-    var _l          = NS.logger;
-    var Class       = window.jsface.Class;
-    var NamedBase   = NS.NamedBase;
+    var _               = null;
+    var _l              = null;
+    var Class           = null;
+
+    var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
+    if (__isNode) {
+        var jsface      = require("jsface");
+
+        _               = require('./utils.js').utils;
+        _l              = require('./logger.js').logger;
+
+        Class           = jsface.Class;
+
+        NS              = exports;
+    } else {
+        //Add to Visionscapers namespace
+        NS              = window.__VI__ || window;
+
+        _               = NS.utils;
+        _l              = NS.logger;
+
+        Class           = window.jsface.Class;
+    }
 
     NS.Configurable = Class({
 
