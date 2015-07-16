@@ -117,6 +117,11 @@
             return utils.func(C) && (C === C.prototype.constructor);
         };
 
+        _mustNOTexist("int");
+        utils.int = utils.int || function(arg) {
+            return utils.number(arg) && (arg % 1 === 0);
+        };
+
         _mustNOTexist("equals");
         /**
          *
@@ -404,11 +409,50 @@
             
             return removed;
         };
-        
-        _mustNOTexist("int");
-        utils.int = utils.int || function(arg) {
-            return utils.number(arg) && (arg % 1 === 0);
+
+        _mustNOTexist("allOccurrences");
+        /**
+         *
+         * Find indices of all occurrences of value in list
+         *
+         * @param {array|string}   list
+         * @param {*} value
+         *
+         * @returns {array|null}           On success an array of indices is returned, on error null
+         *
+         */
+        var allOccurrences = function(list, value) {
+            var me = "Utils::allOccurrences";
+
+            if (!utils.array(list) && !utils.string(list)) {
+                log.error(me, "Given list is not an array or string");
+                return null;
+            }
+
+            if (utils.string(list) && !utils.string(value)) {
+                log.error(me, "Unable to search for a non string value in a string");
+                return null;
+            }
+
+            if (utils.string(list) && utils.string(value) && utils.empty(value)) {
+                log.warn(me, "Unable to search for an empty string in a string");
+                return [];
+            }
+
+            var startIndex  = 0;
+            var index       = -1;
+            var indices     = [];
+
+            var listLen     = list.length;
+
+            while ((index = list.indexOf(value, startIndex)) > -1) {
+                indices.push(index);
+                startIndex = index + 1;
+            }
+
+            return indices;
         };
+        utils.allOccurrences = utils.allOccurrences || allOccurrences;
     };
 
 })();
