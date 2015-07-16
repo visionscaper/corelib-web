@@ -18,7 +18,7 @@
         _l          = require('../../logger.js').logger;
 
         Class       = jsface.Class;
-        NamedBase   = require("../../base.js").Base;
+        NamedBase   = require("../../base.js").NamedBase;
 
         NS = exports;
     } else {
