@@ -92,6 +92,36 @@
         },
 
         /**
+         * Get the origin of the log message.
+         * @param {int} retrace Extra steps back through the stack from the origin.
+         * @return {String}
+         */
+        getOrigin: function(retrace) {
+            var stack = new Error('').stack.split("\n");
+            
+            if(!_.def(retrace)) {
+                retrace = 0;
+            }
+            
+            // This will get the line at which the logger is called.
+            var defaultRetrace = 3;
+
+            // Check if stack trace starts with arbitrary line (e.g. 'Error', in Chrome)
+            var relevantLine = defaultRetrace + retrace;
+            var fileMatch = /.*\/(.*):(\d+):\d+/;
+            if(!fileMatch.exec(stack[0])) {
+                relevantLine += 1;
+            }
+
+            var stackline = stack[relevantLine];
+            var match = /.*\/(.*):(\d+):\d+/.exec(stackline);
+            var file = match[1];
+            var line = match[2];
+
+            return '[' + file + ":" + line + ']'
+        },
+
+        /**
          *
          * @method setLogLevel
          *
@@ -130,6 +160,10 @@
                 return;
             }
 
+            if(!_.def(me)) {
+                me = this.getOrigin();
+            }
+
             var args = Array.prototype.slice.call(arguments, 0);
             args.unshift(Logging.Logger.errorLevel);
 
@@ -149,6 +183,10 @@
         warn : function(me, message) {
             if (this._logLevel > Logging.Logger.warnLevel) {
                 return;
+            }
+            
+            if(!_.def(me)) {
+                me = this.getOrigin();
             }
 
             var args = Array.prototype.slice.call(arguments, 0);
@@ -172,6 +210,10 @@
                 return;
             }
 
+            if(!_.def(me)) {
+                me = this.getOrigin();
+            }
+
             var args = Array.prototype.slice.call(arguments, 0);
             args.unshift(Logging.Logger.infoLevel);
 
@@ -191,6 +233,10 @@
         debug : function(me, message) {
             if (this._logLevel > Logging.Logger.debugLevel) {
                 return;
+            }
+            
+            if(!_.def(me)) {
+                me = this.getOrigin();
             }
 
             var args = Array.prototype.slice.call(arguments, 0);
