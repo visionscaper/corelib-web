@@ -98,27 +98,31 @@
          */
         getOrigin: function(retrace) {
             var stack = new Error('').stack.split("\n");
+            var _u = Logging.Logger.utils;
             
-            if(!_.def(retrace)) {
+            if(!Number.isInteger(retrace)) {
                 retrace = 0;
             }
             
             // This will get the line at which the logger is called.
-            var defaultRetrace = 3;
+            var defaultRetrace = 2;
 
             // Check if stack trace starts with arbitrary line (e.g. 'Error', in Chrome)
             var relevantLine = defaultRetrace + retrace;
             var fileMatch = /.*\/(.*):(\d+):\d+/;
-            if(!fileMatch.exec(stack[0])) {
+            if(fileMatch.exec(stack[0]) === null) {
                 relevantLine += 1;
             }
 
             var stackline = stack[relevantLine];
-            var match = /.*\/(.*):(\d+):\d+/.exec(stackline);
-            var file = match[1];
-            var line = match[2];
-
-            return '[' + file + ":" + line + ']'
+            var match = fileMatch.exec(stackline);
+            if(match !== null && _u.object(match)) {
+                var file = match[1] || 'unknown';
+                var line = match[2] || 'unknown';
+                return '[' + file + ":" + line + ']'
+            } else {
+                return stackline;
+            }
         },
 
         /**
@@ -159,8 +163,9 @@
             if (this._logLevel > Logging.Logger.errorLevel) {
                 return;
             }
+            var _u = Logging.Logger.utils;
 
-            if(!_.def(me)) {
+            if(!_u.def(me)) {
                 me = this.getOrigin();
             }
 
@@ -184,8 +189,9 @@
             if (this._logLevel > Logging.Logger.warnLevel) {
                 return;
             }
+            var _u = Logging.Logger.utils;
             
-            if(!_.def(me)) {
+            if(!_u.def(me)) {
                 me = this.getOrigin();
             }
 
@@ -209,8 +215,9 @@
             if (this._logLevel > Logging.Logger.infoLevel) {
                 return;
             }
+            var _u = Logging.Logger.utils;
 
-            if(!_.def(me)) {
+            if(!_u.def(me)) {
                 me = this.getOrigin();
             }
 
@@ -234,8 +241,9 @@
             if (this._logLevel > Logging.Logger.debugLevel) {
                 return;
             }
+            var _u = Logging.Logger.utils;
             
-            if(!_.def(me)) {
+            if(!_u.def(me)) {
                 me = this.getOrigin();
             }
 
