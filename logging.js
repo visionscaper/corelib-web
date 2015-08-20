@@ -163,13 +163,12 @@
             if (this._logLevel > Logging.Logger.errorLevel) {
                 return;
             }
-            var _u = Logging.Logger.utils;
-
-            if(!_u.def(me)) {
-                me = this.getOrigin();
-            }
 
             var args = Array.prototype.slice.call(arguments, 0);
+            if(args.length === 1) {
+                me = this.getOrigin();
+                args.unshift(me);
+            }
             args.unshift(Logging.Logger.errorLevel);
 
             this._log.apply(this, args);
@@ -189,13 +188,12 @@
             if (this._logLevel > Logging.Logger.warnLevel) {
                 return;
             }
-            var _u = Logging.Logger.utils;
-            
-            if(!_u.def(me)) {
-                me = this.getOrigin();
-            }
 
             var args = Array.prototype.slice.call(arguments, 0);
+            if(args.length === 1) {
+                me = this.getOrigin();
+                args.unshift(me);
+            }
             args.unshift(Logging.Logger.warnLevel);
 
             this._log.apply(this, args);
@@ -215,13 +213,12 @@
             if (this._logLevel > Logging.Logger.infoLevel) {
                 return;
             }
-            var _u = Logging.Logger.utils;
-
-            if(!_u.def(me)) {
-                me = this.getOrigin();
-            }
 
             var args = Array.prototype.slice.call(arguments, 0);
+            if(args.length === 1) {
+                me = this.getOrigin();
+                args.unshift(me);
+            }
             args.unshift(Logging.Logger.infoLevel);
 
             this._log.apply(this, args);
@@ -241,13 +238,12 @@
             if (this._logLevel > Logging.Logger.debugLevel) {
                 return;
             }
-            var _u = Logging.Logger.utils;
-            
-            if(!_u.def(me)) {
-                me = this.getOrigin();
-            }
 
             var args = Array.prototype.slice.call(arguments, 0);
+            if(args.length === 1) {
+                me = this.getOrigin();
+                args.unshift(me);
+            }
             args.unshift(Logging.Logger.debugLevel);
 
             this._log.apply(this, args);
