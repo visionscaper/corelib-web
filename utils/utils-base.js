@@ -239,7 +239,6 @@
             return sureFunc;
         };
 
-        _mustNOTexist("now");
         utils.now = utils.now || function () {
             return (new Date()).getTime();
         };
