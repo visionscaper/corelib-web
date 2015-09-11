@@ -496,7 +496,7 @@
         },
 
         int : function(i) {
-            return Number.isInteger(i) && (i % 1 === 0);
+            return !isNaN(parseFloat(i)) && isFinite(i) && (i % 1 === 0);
         },
 
         now : function() {
