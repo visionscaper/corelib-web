@@ -58,6 +58,12 @@
          *
          **************************************************/
 
+        utils._mustNOTexist("isValid");
+        var isValid = function(arg) {
+            return _.obj(arg) && _.hasMethod(arg, 'isValid') && arg.isValid();
+        };
+        utils.isValid = utils.isValid || isValid;
+
         utils._mustNOTexist("valueError");
         utils._mustNOTexist("valueWarn");
         var badValueMessage = function(name, value, why, defaultTo) {
@@ -89,7 +95,7 @@
         utils.valueError = utils.valueError || valueError;
         utils.valueWarn = utils.valueWarn || valueWarn;
 
-        utils._mustNOTexist("validateOne");
+
         var validationMessages = {
             def: "Must be defined.",
             obj: "Must be object.",
@@ -102,6 +108,7 @@
             empty: "Must be empty.",
             class: "Must be class.",
             int: "Must be int.",
+            isValid: "Is invalid.",
             parsableToNumber: "Must be parsable to Number."
         };
         /**
@@ -125,6 +132,9 @@
                 options = message;
                 message = undefined;
             }
+
+            var result = { name: name, original: value };
+
             // Direct method
             if(method === false) {
                 valid = false;
@@ -133,17 +143,18 @@
                 // Method doesn't exist
                 if(!utils.func(utils[method])) {
                     valueError(me, name, value, "Don't know how to validate '{0}'.".fmt(method));
-                    return false;
-                }
-
-                // Apply util method
-                if(!utils[method].apply(utils, [value])) {
+                    message = "Don't know how to validate '{0}'.".fmt(method);
                     valid = false;
-                    if (!_.def(message)) {
-                        if (_.has(validationMessages, method)) {
-                            message = validationMessages[method];
-                        } else {
-                            message = "Must be {0}.".fmt(method);
+                } else {
+                    // Apply util method
+                    if (!utils[method].apply(utils, [value])) {
+                        valid = false;
+                        if (!_.def(message)) {
+                            if (_.has(validationMessages, method)) {
+                                message = validationMessages[method];
+                            } else {
+                                message = "Must be {0}.".fmt(method);
+                            }
                         }
                     }
                 }
@@ -156,22 +167,22 @@
             if(!valid) {
                 if(utils.obj(options) && _.has(options, 'default')) {
                     if(_.get(options, 'warn') !== false) {
-                        valueWarn(me, name, value, message);
+                        result.warning = {
+                            message: message
+                        };
                     }
-                    var returnValue = {};
-                    returnValue[name] = options.default;
-                    return returnValue;
+                    result.valid = options.default;
                 } else {
-                    valueError(me, name, value, message);
-                    return false;
+                    result.error = {
+                        message: message
+                    }
                 }
+            } else {
+                result.valid = value;
             }
 
-            var returnValue = {};
-            returnValue[name] = value;
-            return returnValue;
+            return result;
         };
-        utils.validateOne = utils.validateOne || validateOne;
 
         utils._mustNOTexist("validate");
         /**
@@ -186,37 +197,72 @@
          *                                  of the given checks object, with their validated values.
          *                                  If any of the validations failed, FALSE will be returned.
          */
-        var validate = function(me, checks, consequence) {
+        var validate = function(me, checks, consequence, errCallback) {
             var validated = {};
+            var hasCallback = utils.func(errCallback);
+
             if(_.obj(checks)) {
                 for(var i in checks) {
                     checks[i].unshift(i);
                     checks[i].unshift(me);
-                    var validateThis = validateOne.apply(utils, checks[i]);
-                    if(validateThis === false) {
-                        validated[i] = false;
-                    } else {
-                        validated[i] = validateThis[i];
-                    }
+                    var current = validateOne.apply(utils, checks[i]);
+                    validated[i] = current;
                 }
             } else {
-                log.error(me, "Cannot validate. Parameter 'checks' must be object.", checks);
-                if(!_.def(consequence)) {
-                    log.error(consequence);
-                }
-                return false;
-            }
-            // If any of the validated parameters failed, return false.
-            for(var i in validated) {
-                if(validated[i] === false) {
+                if(hasCallback) {
+                    errCallback(null, {
+                        message: "Cannot validate. Parameter 'checks' must be object. " + consequence
+                    });
+                } else {
+                    log.error(me, "Cannot validate. Parameter 'checks' must be object.", checks);
                     if(!_.def(consequence)) {
                         log.error(consequence);
                     }
-                    return false;
+                }
+                return false;
+            }
+
+            // Go through results
+            var errors = {};
+            var warnings = {};
+            var valid = true;
+            var results = {};
+            for(var i in validated) {
+                if(_.has(validated[i], 'error')) {
+                    errors[i] = {
+                        message: validated[i].error
+                    };
+                    if(!hasCallback) {
+                        valueError(me, i, _.get(validated[i], 'original'), _.get(validated[i], 'error.message'));
+                    }
+                    valid = false;
+                }
+                if(_.has(validated[i], 'warning')) {
+                    warnings[i] = {
+                        message: validated[i].warning
+                    };
+                    if(!hasCallback) {
+                        valueWarn(me, i, _.get(validated[i], 'original'), _.get(validated[i], 'warning.message'));
+                    }
+                }
+
+                if(_.has(validated[i], 'valid')) {
+                    results[i] = validated[i].valid;
                 }
             }
 
-            return validated;
+            if(hasCallback && !valid) {
+                errCallback(null, {
+                    message: consequence,
+                    originalError: errors
+                });
+            }
+
+            if(!valid) {
+                return false;
+            } else {
+                return results;
+            }
         };
         utils.validate = utils.validate || validate;
     };
