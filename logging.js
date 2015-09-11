@@ -61,7 +61,7 @@
         _minMeLength        :  0,
         _maxMeLength        : 70,
 
-        _stackLimit         : 5,
+        _stackLimit         : 10,
         _minStackLevel      : Logging.LoggingLevel.WARN,
 
         /**
@@ -427,7 +427,7 @@
             // Get stack trace
             var stack = undefined;
             if(level >= this._minStackLevel) {
-                var offset = 3, limit = 5;
+                var offset = 3, limit = this._stackLimit;
                 if(_u.object(options)) {
                     if (_u.int(options.stackOffset)) {
                         offset += options.stackOffset;
