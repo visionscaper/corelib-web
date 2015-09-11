@@ -61,6 +61,9 @@
         _minMeLength        :  0,
         _maxMeLength        : 70,
 
+        _stackLimit         : 5,
+        _minStackLevel      : Logging.LoggingLevel.WARN,
+
         /**
          * Creates a logger object that shows logs of log-level 'level' and higher levels
          *
@@ -89,6 +92,28 @@
             }
 
             this._logLevel = level;
+        },
+
+        getStackTrace: function(offset, limit) {
+            var _u = Logging.Logger.utils;
+
+            if(!_u.int(offset) || offset < 0) {
+                offset = 0;
+            }
+            if(!_u.int(limit) || limit < 0) {
+                limit = 0;
+            }
+
+            var stack = new Error('').stack.split("\n");
+
+            // If first line is arbitrary (error) line
+            if(_u.string(stack[0])) {
+                var fileMatch = /.*\/(.*):(\d+):\d+/;
+                if(fileMatch.exec(stack[0]) === null) {
+                    offset++;
+                }
+            }
+            return {trace: stack.slice(offset, offset + limit)};
         },
 
         /**
@@ -129,11 +154,10 @@
             if (this._logLevel > Logging.Logger.errorLevel) {
                 return;
             }
-
             var args = Array.prototype.slice.call(arguments, 0);
-            args.unshift(Logging.Logger.errorLevel);
+            args.shift(); // remove 'me' from messages
 
-            this._log.apply(this, args);
+            this._log.call(this, Logging.Logger.errorLevel, me, args);
         },
 
         /**
@@ -152,9 +176,9 @@
             }
 
             var args = Array.prototype.slice.call(arguments, 0);
-            args.unshift(Logging.Logger.warnLevel);
+            args.shift(); // remove 'me' from messages
 
-            this._log.apply(this, args);
+            this._log.call(this, Logging.Logger.warnLevel, me, args);
         },
 
         /**
@@ -173,9 +197,9 @@
             }
 
             var args = Array.prototype.slice.call(arguments, 0);
-            args.unshift(Logging.Logger.infoLevel);
+            args.shift(); // remove 'me' from messages
 
-            this._log.apply(this, args);
+            this._log.call(this, Logging.Logger.infoLevel, me, args);
         },
 
         /**
@@ -194,9 +218,24 @@
             }
 
             var args = Array.prototype.slice.call(arguments, 0);
-            args.unshift(Logging.Logger.debugLevel);
+            args.shift(); // remove 'me' from messages
 
-            this._log.apply(this, args);
+            this._log.call(this, Logging.Logger.debugLevel, me, args);
+        },
+
+        /**
+         * Generic, configurable message.
+         * @param {string} level                String indicating logging level.
+         * @param {string} me                   String indicating which entity or method reports this message
+         * @param {array} messages              Array of messages to log.
+         * @param {object} options              Configuration object.
+         * @param {int} options.stackOffset     Number of items in stack trace to skip.
+         * @param {int} options.stackLimit      Number of items in stack trace to show.
+         */
+        log : function(level, me, messages, options) {
+            var stringLevel = level.toUpperCase();
+            var level = Logging.LoggingLevel[stringLevel];
+            this._log.call(this, level, me, messages, options);
         },
 
         /*************************************
@@ -336,21 +375,25 @@
         },
 
         /**
-         * TODO Description
+         * Generic, configurable message.
          *
          * @protected
          * @method _log
          *
-         * @param {number} [level=Logger.infoLevel]
-         * @param {string} [me=null]
-         * @param {string} [message="[NO MESSAGE GIVEN]"]
-         *
+         * @param {string} me                   String indicating which entity or method reports this message
+         * @param {string} level                String indicating logging level.
+         * @param {array} messages              Array of messages to log.
+         * @param {object} options              Configuration object.
+         * @param {int} options.stackOffset     Number of items in stack trace to skip.
+         * @param {int} options.stackLimit      Number of items in stack trace to show.
          */
-        _log : function(level, me, message) {
+        _log : function(level, me, messages, options) {
             var _u = Logging.Logger.utils;
 
             level = level || Logging.Logger.infoLevel;
             var logFunc = _u.ensureFunc(this._logFunc[level]);
+
+            var message = _u.array(messages) && messages.length > 0 ? messages[0] : undefined;
 
             if ((!_u.string(me)) && (!_u.string(message))) {
                 logFunc.apply(console);
@@ -381,7 +424,23 @@
                 preFix += me + " : "
             }
 
-            var logArgs = Array.prototype.slice.call(arguments, 3);
+            // Get stack trace
+            var stack = undefined;
+            if(level >= this._minStackLevel) {
+                var offset = 3, limit = 5;
+                if(_u.object(options)) {
+                    if (_u.int(options.stackOffset)) {
+                        offset += options.stackOffset;
+                    }
+                    if (_u.int(options.limit)) {
+                        offset += options.limit;
+                    }
+                }
+                stack = this.getStackTrace(offset,limit);
+            }
+
+            var logArgs = messages;
+            logArgs.shift(); // remove first message
             if (!_u.object(message)) {
                 message = preFix + message;
                 message = this._preProcessLogText(level, message);
@@ -393,6 +452,10 @@
             }
 
             logFunc.apply(console, logArgs);
+            if(_u.def(stack)) {
+                var stackLogFunc = _u.ensureFunc(this._logFunc[Logging.LoggingLevel.DEBUG]);
+                stackLogFunc.apply(console, [preFix, stack]);
+            }
         }
 
         /*************************************
@@ -425,6 +488,15 @@
 
         ensureFunc : function(f) {
             return (typeof(f) === "function") ? f : function(){};
+        },
+
+        array : function(a) {
+            var typename = Object.prototype.toString.call(a).slice(8, -1);
+            return typename == 'Array';
+        },
+
+        int : function(i) {
+            return Number.isInteger(i) && (i % 1 === 0);
         },
 
         now : function() {
