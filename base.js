@@ -85,8 +85,11 @@
          */
         getIName: function() {
             return this._instanceName || "[UNKNOWN]";
-        }
+        },
 
+        toString : function() {
+            return this.getIName();
+        }
     });
 
 })();
