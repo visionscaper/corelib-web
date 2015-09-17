@@ -33,7 +33,8 @@
         ERROR         : 4,
         WARN          : 3,
         INFO          : 2,
-        DEBUG         : 1
+        DEBUG         : 1,
+        TRACE         : 0
     };
 
     Logging.Logger = Class({
@@ -43,7 +44,8 @@
             errorLevel      : Logging.LoggingLevel.ERROR,
             warnLevel       : Logging.LoggingLevel.WARN,
             infoLevel       : Logging.LoggingLevel.INFO,
-            debugLevel      : Logging.LoggingLevel.DEBUG
+            debugLevel      : Logging.LoggingLevel.DEBUG,
+            traceLevel      : Logging.LoggingLevel.TRACE
         },
 
         _logLevel       : Logging.LoggingLevel.WARN,
@@ -258,6 +260,7 @@
             this._levelNames[Logging.Logger.warnLevel]      = "WARNING";
             this._levelNames[Logging.Logger.infoLevel]      = "INFO";
             this._levelNames[Logging.Logger.debugLevel]     = "DEBUG";
+            this._levelNames[Logging.Logger.traceLevel]     = "TRACE";
 
             this._maxLevelNameLength = 0;
             var levels = Object.getOwnPropertyNames(this._levelNames);
@@ -374,6 +377,32 @@
             return coloredTxt;
         },
 
+        _prefix  : function(me, level) {
+            var _u = Logging.Logger.utils;
+            var levelName       = this._levelNames[level];
+
+            //Ensure that all level names have the same length
+            var levelNameLength = _u.string(levelName) ? levelName.length : ((levelName + " ").length-1);
+            var gap             = Array(this._maxLevelNameLength-levelNameLength+1).join(" ");
+
+            var preFix          = _u.now() + " [" + levelName + gap  + "] ";
+            var meLength        = _u.string(me) ? me.length : 0;
+            if (meLength > 0) {
+
+                if (meLength < this._minMeLength) {
+                    gap = Array(this._minMeLength-meLength+1).join(" ");
+                    me  = me + gap;
+                } else {
+                    if (meLength <= this._maxMeLength) {
+                        this._minMeLength = meLength;
+                    }
+                }
+
+                preFix += me + " : "
+            }
+            return preFix;
+        },
+
         /**
          * Generic, configurable message.
          *
@@ -402,27 +431,7 @@
 
             message = message || "[NO MESSAGE GIVEN]";
 
-            var levelName       = this._levelNames[level];
-            var levelNameLength = _u.string(levelName) ? levelName.length : ((levelName + " ").length-1);
-
-            //Ensure that all level names have the same length
-            var gap             = Array(this._maxLevelNameLength-levelNameLength+1).join(" ");
-
-            var preFix          = _u.now() + " [" + levelName + gap  + "] ";
-            var meLength        = _u.string(me) ? me.length : 0;
-            if (meLength > 0) {
-
-                if (meLength < this._minMeLength) {
-                    gap = Array(this._minMeLength-meLength+1).join(" ");
-                    me  = me + gap;
-                } else {
-                    if (meLength <= this._maxMeLength) {
-                        this._minMeLength = meLength;
-                    }
-                }
-
-                preFix += me + " : "
-            }
+            var preFix = this._prefix(me, level);
 
             // Get stack trace
             var stack = undefined;
@@ -454,7 +463,8 @@
             logFunc.apply(console, logArgs);
             if(_u.def(stack)) {
                 var stackLogFunc = _u.ensureFunc(this._logFunc[Logging.LoggingLevel.DEBUG]);
-                stackLogFunc.apply(console, [preFix, stack]);
+                var tracePrefix = this._prefix(me, Logging.Logger.traceLevel);
+                stackLogFunc.apply(console, [tracePrefix, stack]);
             }
         }
 

@@ -215,8 +215,8 @@
                     });
                 } else {
                     log.error(me, "Cannot validate. Parameter 'checks' must be object.", checks);
-                    if(!_.def(consequence)) {
-                        log.error(consequence);
+                    if(_.def(consequence)) {
+                        log.error(me, consequence);
                     }
                 }
                 return false;
@@ -259,6 +259,9 @@
             }
 
             if(!valid) {
+                if(_.def(consequence)) {
+                    log.error(me, consequence);
+                }
                 return false;
             } else {
                 return results;
