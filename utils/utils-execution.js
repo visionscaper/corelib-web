@@ -142,6 +142,11 @@
             var doLog = !utils.empty(description);
 
             if (!utils.obj(obj) && !utils.func(obj)) {
+                if (doLog) {
+                    log.error(me, ("{0} is not a valid object, " +
+                                   "it does not adhere to given interface").fmt(description));
+                }
+
                 return adheres;
             }
 
