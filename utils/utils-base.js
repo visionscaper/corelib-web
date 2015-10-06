@@ -232,7 +232,7 @@
             if (!utils.func(sureFunc)) {
                 sureFunc = function() {};
                 if (utils.def(funcName)) {
-                    log.error("Utils::ensureFunc : [{0}] is not a function, providing stand-in function".fmt(funcName));
+                    log.error("Utils::ensureFunc", "[{0}] is not a function, providing stand-in function".fmt(funcName));
                 }
             }
 
