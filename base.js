@@ -72,6 +72,11 @@
         constructor: function (name) {
             NS.NamedBase.$super.call(this);
 
+            if (!_.string(name) || _.empty(name)) {
+                _l.error("NamedBase::constructor", "Given instance name is not a string, changing to '[INVALID NAME]'");
+                name = "[INVALID NAME]";
+            }
+
             this._instanceName = name || "[UNKNOWN]";
         },
 
@@ -85,8 +90,11 @@
          */
         getIName: function() {
             return this._instanceName || "[UNKNOWN]";
-        }
+        },
 
+        toString : function() {
+            return this.getIName();
+        }
     });
 
 })();
