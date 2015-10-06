@@ -208,11 +208,11 @@
             }
 
             //Remove event
-            args = args.shift();
+            args.shift();
 
             i = handlerList.length;
             while (i--) {
-                handlerList[i].apply(args);
+                handlerList[i].apply(null, args);
             }
         },
 
