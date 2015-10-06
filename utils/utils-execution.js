@@ -294,6 +294,7 @@
 
             var numFuncs        = funcNameList.length;
 
+            //TODO : write defense mechanism against calling step callback multiple times
             var __funcReady     = function (dataIn, errIn) {
                 var _errIn = errIn;
 
