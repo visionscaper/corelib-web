@@ -41,10 +41,14 @@
          * @param {boolean} [useCapture]
          * @param {boolean} [wantsUntrusted]
          *
+         * @returns {boolean}   True on success, else false
+         *
          */
         _addDOMEventListener : function(DOMElement, type, methodName, useCapture, wantsUntrusted) {
             var iName   = _.exec(this, "getIName") || "[UNKNOWN INSTANCE]";
-            var me      = "[{}]HandlesDOMEvents::_addDOMEventListener".fmt(iName);
+            var me      = "[{0}]HandlesDOMEvents::_addDOMEventListener".fmt(iName);
+
+            var success = false;
 
             var typeValid       = _.string(type) && !_.empty(type);
             var methodNameValid = _.string(methodName) && !_.empty(methodName);
@@ -58,25 +62,25 @@
             if (!typeValid) {
                 _l.error(me, ("No valid event type given, " +
                               "unable to add method [{0}] as DOM event listener").fmt(safeMethodName));
-                return;
+                return success;
             }
 
             if (!methodNameValid) {
                 _l.error(me, ("No valid method name given, " +
                               "unable to add method as [{0}] DOM event listener").fmt(safeType));
-                return;
+                return success;
             }
 
             if (!_.hasMethod(DOMElement, "addEventListener")) {
                 _l.error(me, ("No valid DOM element provided, " +
                               "unable to add method [{0}] as [{1}] DOM event listener").fmt(safeMethodName, safeType));
-                return;
+                return success;
             }
 
             if (!methodExists) {
                 _l.error(me, ("This instance had no method named [{0}], " +
                               "unable to add method as [{1}] DOM event listener").fmt(safeMethodName, safeType));
-                return;
+                return success;
             }
 
             this._llTryInitDOMEventListeners(DOMElement, type);
@@ -86,11 +90,13 @@
 
             //Register bound method to find it back later on so we are able to remove it as listener from DOM element
             this._DOMEventListeners.get(DOMElement)[type][methodName] = boundMethod;
+
+            return (success = true);
         },
 
         /**
          *
-         * See addEventListener, e.g. https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener
+         * See removeEventListener, e.g. https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener
          *
          * The listener function listening to DOMElement for event type, with name methodName, will be retrieved
          *  and removed as listener from the DOMElement
@@ -101,10 +107,14 @@
          * @param {string} methodName           Method name of this instance that should act as listener
          * @param {boolean} [useCapture]
          *
+         * @returns {boolean}   True on success, else false
+         *
          */
         _removeDOMEventListener : function(DOMElement, type, methodName, useCapture) {
             var iName   = _.exec(this, "getIName") || "[UNKNOWN INSTANCE]";
-            var me      = "[{}]HandlesDOMEvents::_removeDOMEventListener".fmt(iName);
+            var me      = "[{0}]HandlesDOMEvents::_removeDOMEventListener".fmt(iName);
+
+            var success = false;
 
             var typeValid       = _.string(type) && !_.empty(type);
             var methodNameValid = _.string(methodName) && !_.empty(methodName);
@@ -115,26 +125,34 @@
             if (!typeValid) {
                 _l.error(me, ("No valid event type given, " +
                               "unable to remove method [{0}] as DOM event listener").fmt(safeMethodName));
-                return;
+                return success;
             }
 
             if (!methodNameValid) {
                 _l.error(me, ("No valid method name given, " +
                               "unable to remove method as [{0}] DOM event listener").fmt(safeType));
-                return;
+                return success;
             }
 
             if (!_.hasMethod(DOMElement, "removeEventListener")) {
                 _l.error(me, ("No valid DOM element provided, " +
                               "unable to remove method [{0}] as [{1}] DOM event listener").fmt(safeMethodName, safeType));
-                return;
+                return success;
             }
 
             this._llTryInitDOMEventListeners(DOMElement, type);
 
             //Retrieve the bound method and unregister it as listener from the DOM element
             var boundMethod = this._DOMEventListeners.get(DOMElement)[type][methodName];
+            if (!_.func(boundMethod)) {
+                _l.warn(me, ("Method [{0}] was not set up as listener for [{1}] events " +
+                             "from given DOM element, nothing to remove".fmt(safeMethodName, safeType)));
+                return success;
+            }
+
             DOMElement.removeEventListener(type, boundMethod, useCapture);
+
+            return (success = true);
         },
 
         _llTryInitDOMEventListeners : function(DOMElement, eventName) {
