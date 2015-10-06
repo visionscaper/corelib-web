@@ -54,8 +54,8 @@
 
         /**
          *
-         * Adds properties in object Config to the instance as _<property>.
-         * Properties are only added when the property resolves to undefined.
+         * Adds properties in object Config to the instance as _<property> or
+         *  overwrites the existing value of _<property>.
          *
          * @param {Object} config       Object that contains properties to add to the instance
          * @param {Object} defaults     Object that contains default values for undefined config properties.
@@ -72,10 +72,14 @@
                     var prop            = props[propIdx];
                     var instanceProp    = "_" + prop;
 
-                    if (this[instanceProp] === undefined) {
+                    var instancePropVal = this[instanceProp];
+                    var isEqual         = instancePropVal === config[prop];
+                    if (!isEqual) {
+                        if (instancePropVal !== undefined) {
+                            _l.debug(me, "Overwriting the existing value of property {0}".fmt(instanceProp))
+                        }
+
                         this[instanceProp] = config[prop];
-                    } else {
-                        _l.debug(me, "Skipping property {0} because it already exists in instance".fmt(instanceProp))
                     }
                 }
             }
