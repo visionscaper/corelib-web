@@ -383,7 +383,7 @@
         utils.removeFrom = utils.removeFrom || function(from, element, description) {
             var me  = "Utils::removeFrom";
             
-            var removed = false;
+            var removed = -1;
             
             if(!utils.array(from)) {
                 if(utils.def(description)) {
@@ -399,15 +399,77 @@
             }
             
             // Remove all references to the element
-            for(var i in from) {
+            for(var i = 0; i < from.length; i++) {
                 if(from[i] === element) {
-                    delete from[i];
+                    from.splice(i, 1);
+                    i--;
                     removed++;
                 }
             }
             
             return removed;
         };
+
+        _mustNOTexist("hasValue");
+        /**
+         *
+         * Returns if a property of object obj has a value val
+         *
+         * @param {object} obj
+         * @param {*} val
+         * @param {string} [objDescription]
+         *
+         * @returns {boolean}
+         *
+         */
+        utils.hasValue = utils.hasValue || function(obj, val, objDescription) {
+            var me = "Utils::hasValue";
+
+            if (!utils.obj(obj)) {
+                if (utils.def(objDescription)) {
+                    log.warn(me, "[{0}] is not an object, value not found.".fmt(objDescription));
+                    return false;
+                }
+            }
+
+            for (var prop in obj) {
+                if(obj.hasOwnProperty(prop) && obj[prop] === val) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        _mustNOTexist("findProp");
+        /**
+         *
+         * Returns first property name of obj that has value val
+         *
+         * @param {object} obj
+         * @param {*} val
+         * @param {string} [objDescription]
+         *
+         * @returns {string|null}   Property name if found, else null
+         *
+         */
+        utils.findProp = utils.findProp || function(obj, val, objDescription) {
+                    var me = "Utils::findProp";
+
+                    if (!utils.obj(obj)) {
+                        if (utils.def(objDescription)) {
+                            log.warn(me, ("[{0}] is not an object, " +
+                                          "unable to find property with value.").fmt(objDescription));
+                            return false;
+                        }
+                    }
+
+                    for (var prop in obj) {
+                        if(obj.hasOwnProperty(prop) && obj[prop] === val) {
+                            return prop;
+                        }
+                    }
+                    return null;
+                };
 
         _mustNOTexist("allOccurrences");
         /**
