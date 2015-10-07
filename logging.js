@@ -73,7 +73,7 @@
          * @param {number} level    See Logging.LoggingLevel
          *
          */
-        constructor : function(level) {
+        constructor : function(level, traceLogLevel) {
             var me = "Logger::constructor";
             var _u = Logging.Logger.utils;
 
@@ -86,12 +86,23 @@
                 level = Logging.LoggingLevel.WARN;
             }
 
+            if (!_u.def(traceLogLevel)) {
+                console.log("{0} : no trace logging level given, setting trace log-level to warn".fmt(me));
+                traceLogLevel = Logging.LoggingLevel.WARN;
+            }
+
             if (!_u.def(this._logFunc[level])) {
-                console.log("{0} : level {1} unknown, setting log-level to warn".fmt(me, level));
+                console.log("{0} : log level {1} unknown, setting log-level to warn".fmt(me, level));
                 level = Logging.LoggingLevel.WARN;
             }
 
+            if (!_u.def(this._logFunc[traceLogLevel])) {
+                console.log("{0} : trace log level {1} unknown, setting trace log-level to warn".fmt(me, level));
+                traceLogLevel = Logging.LoggingLevel.WARN;
+            }
+
             this._logLevel = level;
+            this._minTraceLogLevel = traceLogLevel;
         },
 
         getStackTrace: function(offset, limit) {
@@ -426,7 +437,7 @@
 
             // Get stack trace
             var stack = undefined;
-            if(level >= this._minStackLevel) {
+            if(level >= this._minTraceLogLevel) {
                 var offset = 3, limit = this._stackLimit;
                 if(_u.object(options)) {
                     if (_u.int(options.stackOffset)) {

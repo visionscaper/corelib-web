@@ -21,9 +21,20 @@
         Class  = window.jsface.Class;
     }
 
+    var instanceCounter = -1;
+
     NS.Base = Class({
 
-        _valid: false,
+        _valid          : false,
+
+        /**
+         *
+         * ID of instance
+         *
+         * @private
+         *
+         */
+        __instanceID    : null,
 
         /**
          *
@@ -37,7 +48,8 @@
          *
          */
         constructor: function () {
-
+            instanceCounter++;
+            this.__instanceID = instanceCounter;
         },
 
         /**
@@ -50,8 +62,15 @@
          */
         isValid: function () {
             return this._valid;
-        }
+        },
 
+        getInstanceID : function() {
+            return this.__instanceID
+        },
+
+        toString : function() {
+            return "Instance (ID{0})".fmt(this.__instanceID);
+        }
     });
 
     NS.NamedBase = Class(NS.Base, /** @lends NamedBase.prototype */ {
@@ -93,7 +112,7 @@
         },
 
         toString : function() {
-            return this.getIName();
+            return "{0} (ID{1})".fmt(this.getIName(), this.getInstanceID());
         }
     });
 
