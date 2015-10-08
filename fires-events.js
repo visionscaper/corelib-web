@@ -196,7 +196,7 @@
             if(_.isArray(handlerList)) {
                 var i = handlerList.length;
                 while (i--) {
-                    handlerList[i].apply(null, args);
+                    this.__fireAsync(handlerList[i], args);
                 }
             }
 
@@ -207,12 +207,14 @@
                 return;
             }
 
+            //This ensures that args don't change for scheduled fire above are not affected
+            args = args.slice();
             //Remove event
             args.shift();
 
             i = handlerList.length;
             while (i--) {
-                handlerList[i].apply(null, args);
+                this.__fireAsync(handlerList[i], args);
             }
         },
 
@@ -229,7 +231,12 @@
             if(!_.array(this._globalHandlers)) {
                 this._globalHandlers = [];
             }
-        }
+        },
 
+        __fireAsync : function(f, args) {
+            setTimeout(function() {
+                f.apply(null, args);
+            }, 0);
+        }
     });
 })();
