@@ -7,16 +7,26 @@
     var NS      = null;
     var Class   = null;
 
+    var _               = null;
+    var _l              = null;
+
     var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
     if (__isNode) {
         var jsface = require("jsface");
         var Class  = jsface.Class;
+
+        _               = require('./utils.js').utils;
+        _l              = require('./logger.js').logger;
+
         //var extend = jsface.extend;
 
         NS = exports;
     } else {
         //Add to Visionscapers namespace
         NS = window["__VI__"] || window;
+
+        _               = NS.utils;
+        _l              = NS.logger;
 
         Class  = window.jsface.Class;
     }
