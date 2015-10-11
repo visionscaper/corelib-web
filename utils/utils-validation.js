@@ -261,6 +261,9 @@
             }
 
             if(!valid) {
+                if(_.def(consequence)) {
+                    log.error(me, consequence);
+                }
                 return false;
             } else {
                 return results;

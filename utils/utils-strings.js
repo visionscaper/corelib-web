@@ -55,6 +55,29 @@
          *
          **************************************************/
 
+        utils._mustNOTexist("eqStr");
+        /**
+         *
+         * Checks if strings s1 and s2 are equal, case insensitive.
+         * If that is the case, true is returned.
+         *
+         * if s1 or s2 is NOT a string or s1 or s2 is empty, false is returned
+         *
+         * @param {string} s1
+         * @param {string} s2
+         *
+         * @returns {boolean}
+         *
+         */
+        var eqStr = function(s1, s2) {
+            if ((!utils.string(s1) || !utils.string(s2)) || (utils.empty(s1) || utils.empty(s2))) {
+                return false;
+            }
+
+            return (s1.toLowerCase() == s2.toLowerCase());
+        };
+        utils.eqStr = utils.eqStr || eqStr;
+
         utils._mustNOTexist("joinPaths");
         /**
          *
