@@ -261,7 +261,7 @@
             }
 
             if(!valid) {
-                if(_.def(consequence)) {
+                if(utils.def(consequence)) {
                     log.error(me, consequence);
                 }
                 return false;

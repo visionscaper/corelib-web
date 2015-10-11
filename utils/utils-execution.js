@@ -333,7 +333,9 @@
                 if (!utils.empty(errorPile)) {
                     errIn = {
                         message         : "Error(s) occurred executing steps in series",
-                        originalError   : utils.clone(errorPile)
+                        originalError   : {
+                            error_hash : utils.clone(errorPile)
+                        }
                     };
                 }
 
