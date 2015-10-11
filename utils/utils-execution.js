@@ -130,14 +130,21 @@
          * @param {Array} [interfaceDef.methods=[]]         Array with method names
          * @param {Array} [interfaceDef.properties=[]]      Array with property names
          *
-         * @param {String} [description=null]               When the description string not is empty (and not null) the
+         * @param {String|True} [description=null]          When the description string not is empty (and not null) the
          *                                                  function will log messages (including the description) when
          *                                                  necessary. When it is empty or null, no logging is performed
+         *
+         *                                                  When description === true it is attempted to convert the
+         *                                                  given obj in to a string representation.
          *
          */
         var interfaceAdheres = function (obj, interfaceDef, description) {
             var me = "Utils::adheresToInterface";
             var adheres = false;
+
+            if (description === true) {
+                description = obj+"";
+            }
 
             var doLog = !utils.empty(description);
 
