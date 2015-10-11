@@ -60,7 +60,7 @@
 
         utils._mustNOTexist("isValid");
         var isValid = function(arg) {
-            return _.obj(arg) && _.hasMethod(arg, 'isValid') && arg.isValid();
+            return utils.obj(arg) && utils.hasMethod(arg, 'isValid') && arg.isValid();
         };
         utils.isValid = utils.isValid || isValid;
 
@@ -69,7 +69,7 @@
         var badValueMessage = function(name, value, why, defaultTo) {
             var messages = [];
             messages.push("Bad value for: {0}.".fmt(name));
-            if(_.isObject(why)) {
+            if(utils.isObject(why)) {
                 messages.push("| Expected structure:");
                 messages.push(why);
             } else {
@@ -139,7 +139,7 @@
             if(method === false) {
                 valid = false;
             // Util method
-            } else if (_.string(method)) {
+            } else if (utils.string(method)) {
                 // Method doesn't exist
                 if(!utils.func(utils[method])) {
                     valueError(me, name, value, "Don't know how to validate '{0}'.".fmt(method));
@@ -149,8 +149,8 @@
                     // Apply util method
                     if (!utils[method].apply(utils, [value])) {
                         valid = false;
-                        if (!_.def(message)) {
-                            if (_.has(validationMessages, method)) {
+                        if (!utils.def(message)) {
+                            if (utils.has(validationMessages, method)) {
                                 message = validationMessages[method];
                             } else {
                                 message = "Must be {0}.".fmt(method);
@@ -160,13 +160,13 @@
                 }
             }
 
-            if(!_.def(message)) {
+            if(!utils.def(message)) {
                 message = "Invalid.";
             }
 
             if(!valid) {
-                if(utils.obj(options) && _.has(options, 'default')) {
-                    if(_.get(options, 'warn') !== false) {
+                if(utils.obj(options) && utils.has(options, 'default')) {
+                    if(utils.get(options, 'warn') !== false) {
                         result.warning = {
                             message: message
                         };
@@ -201,7 +201,7 @@
             var validated = {};
             var hasCallback = utils.func(errCallback);
 
-            if(_.obj(checks)) {
+            if(utils.obj(checks)) {
                 for(var i in checks) {
                     checks[i].unshift(i);
                     checks[i].unshift(me);
@@ -215,7 +215,9 @@
                     });
                 } else {
                     log.error(me, "Cannot validate. Parameter 'checks' must be object.", checks);
-                    if(!_.def(consequence)) {
+
+                    //TODO : this does not seem to be correct
+                    if(!utils.def(consequence)) {
                         log.error(consequence);
                     }
                 }
@@ -228,25 +230,25 @@
             var valid = true;
             var results = {};
             for(var i in validated) {
-                if(_.has(validated[i], 'error')) {
+                if(utils.has(validated[i], 'error')) {
                     errors[i] = {
                         message: validated[i].error
                     };
                     if(!hasCallback) {
-                        valueError(me, i, _.get(validated[i], 'original'), _.get(validated[i], 'error.message'));
+                        valueError(me, i, utils.get(validated[i], 'original'), utils.get(validated[i], 'error.message'));
                     }
                     valid = false;
                 }
-                if(_.has(validated[i], 'warning')) {
+                if(utils.has(validated[i], 'warning')) {
                     warnings[i] = {
                         message: validated[i].warning
                     };
                     if(!hasCallback) {
-                        valueWarn(me, i, _.get(validated[i], 'original'), _.get(validated[i], 'warning.message'));
+                        valueWarn(me, i, utils.get(validated[i], 'original'), utils.get(validated[i], 'warning.message'));
                     }
                 }
 
-                if(_.has(validated[i], 'valid')) {
+                if(utils.has(validated[i], 'valid')) {
                     results[i] = validated[i].valid;
                 }
             }
