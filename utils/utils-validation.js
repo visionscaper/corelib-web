@@ -47,7 +47,7 @@
 
         //Different util components are registered here
         //This allows us to check in a simple way if certain functionality is available
-        utils._mustExist("_utilsComponents");
+        utils._mustExist(utils._utilsComponents, "_utilsComponents");
         if (utils.obj(utils._utilsComponents)) {
             utils._utilsComponents["validation"] = true;
         }
@@ -58,14 +58,14 @@
          *
          **************************************************/
 
-        utils._mustNOTexist("isValid");
+        utils._mustNOTexist(utils.isValid, "isValid");
         var isValid = function(arg) {
             return utils.obj(arg) && utils.hasMethod(arg, 'isValid') && arg.isValid();
         };
         utils.isValid = utils.isValid || isValid;
 
-        utils._mustNOTexist("valueError");
-        utils._mustNOTexist("valueWarn");
+        utils._mustNOTexist(utils.valueError, "valueError");
+        utils._mustNOTexist(utils.valueWarn, "valueWarn");
         var badValueMessage = function(name, value, why, defaultTo) {
             var messages = [];
             messages.push("Bad value for: {0}.".fmt(name));
@@ -184,7 +184,7 @@
             return result;
         };
 
-        utils._mustNOTexist("validate");
+        utils._mustNOTexist(utils.validate, "validate");
         /**
          * Validates a set of values, based on the given parameters
          * @param {string} me               The identity of the checker.

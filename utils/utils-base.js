@@ -376,12 +376,12 @@
             return s;
         };
         
-        _mustNOTexist("parsableToNumber");
+        _mustNOTexist(utils.parsableToNumber, "parsableToNumber");
         utils.parsableToNumber = utils.parsableToNumber || function(number) {
             return !isNaN(number);
         };
         
-        _mustNOTexist("removeFrom");
+        _mustNOTexist(utils.removeFrom, "removeFrom");
         utils.removeFrom = utils.removeFrom || function(from, element, description) {
             var me  = "Utils::removeFrom";
             
@@ -412,7 +412,7 @@
             return removed;
         };
 
-        _mustNOTexist("hasValue");
+        _mustNOTexist(utils.hasValue, "hasValue");
         /**
          *
          * Returns if a property of object obj has a value val
@@ -442,7 +442,7 @@
             return false;
         };
 
-        _mustNOTexist("findProp");
+        _mustNOTexist(utils.findProp, "findProp");
         /**
          *
          * Returns first property name of obj that has value val
@@ -473,7 +473,7 @@
                     return null;
                 };
 
-        _mustNOTexist("allOccurrences");
+        _mustNOTexist(utils.allOccurrences, "allOccurrences");
         /**
          *
          * Find indices of all occurrences of value in list
