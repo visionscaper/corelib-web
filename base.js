@@ -7,10 +7,17 @@
     var NS      = null;
     var Class   = null;
 
+    var _               = null;
+    var _l              = null;
+
     var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
     if (__isNode) {
         var jsface = require("jsface");
         var Class  = jsface.Class;
+
+        _               = require('./utils.js').utils;
+        _l              = require('./logger.js').logger;
+
         //var extend = jsface.extend;
 
         NS = exports;
@@ -18,12 +25,26 @@
         //Add to Visionscapers namespace
         NS = window.__VI__ || window;
 
+        _               = NS.utils;
+        _l              = NS.logger;
+
         Class  = window.jsface.Class;
     }
 
+    var instanceCounter = -1;
+
     NS.Base = Class({
 
-        _valid: false,
+        _valid          : false,
+
+        /**
+         *
+         * ID of instance
+         *
+         * @private
+         *
+         */
+        __instanceID    : null,
 
         /**
          *
@@ -37,7 +58,8 @@
          *
          */
         constructor: function () {
-
+            instanceCounter++;
+            this.__instanceID = instanceCounter;
         },
 
         /**
@@ -50,8 +72,15 @@
          */
         isValid: function () {
             return this._valid;
-        }
+        },
 
+        getInstanceID : function() {
+            return this.__instanceID
+        },
+
+        toString : function() {
+            return "Instance (ID{0})".fmt(this.__instanceID);
+        }
     });
 
     NS.NamedBase = Class(NS.Base, /** @lends NamedBase.prototype */ {
@@ -72,6 +101,11 @@
         constructor: function (name) {
             NS.NamedBase.$super.call(this);
 
+            if (!_.string(name) || _.empty(name)) {
+                _l.error("NamedBase::constructor", "Given instance name is not a string, changing to '[INVALID NAME]'");
+                name = "[INVALID NAME]";
+            }
+
             this._instanceName = name || "[UNKNOWN]";
         },
 
@@ -85,8 +119,11 @@
          */
         getIName: function() {
             return this._instanceName || "[UNKNOWN]";
-        }
+        },
 
+        toString : function() {
+            return "{0} (ID{1})".fmt(this.getIName(), this.getInstanceID());
+        }
     });
 
 })();

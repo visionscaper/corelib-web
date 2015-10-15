@@ -5,12 +5,31 @@
 (function() {
 
     //Add to Visionscapers namespace
-    var NS          = window.__VI__ || window;
+    var NS              = null;
 
-    var _           = NS.utils;
-    var _l          = NS.logger;
-    var Class       = window.jsface.Class;
-    var NamedBase   = NS.NamedBase;
+    var _               = null;
+    var _l              = null;
+    var Class           = null;
+
+    var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
+    if (__isNode) {
+        var jsface      = require("jsface");
+
+        _               = require('./utils.js').utils;
+        _l              = require('./logger.js').logger;
+
+        Class           = jsface.Class;
+
+        NS              = exports;
+    } else {
+        //Add to Visionscapers namespace
+        NS              = window.__VI__ || window;
+
+        _               = NS.utils;
+        _l              = NS.logger;
+
+        Class           = window.jsface.Class;
+    }
 
     NS.Configurable = Class({
 
@@ -35,31 +54,46 @@
 
         /**
          *
-         * Adds properties in object Config to the instance as _<property>.
-         * Properties are only added when the property resolves to undefined.
+         * Adds properties in object Config to the instance as _<property> or
+         *  overwrites the existing value of _<property>.
          *
          * @param {Object} config       Object that contains properties to add to the instance
-         *
+         * @param {Object} defaults     Object that contains default values for undefined config properties.
          * @protected
          *
          */
-        _addConfigProperties : function(config) {
+        _addConfigProperties : function(config, defaults) {
             var me = "[{0}]Configurable::_addConfigProperties".fmt(_.exec(this, 'getIName') || '[UNKOWN]');
 
-            if (!_.obj(config)) {
-                //Nothing to do
-                return;
+            // Copy config properties
+            if (_.obj(config)) {
+                var props = Object.getOwnPropertyNames(config);
+                for (var propIdx in props) {
+                    var prop            = props[propIdx];
+                    var instanceProp    = "_" + prop;
+
+                    var instancePropVal = this[instanceProp];
+                    var isEqual         = instancePropVal === config[prop];
+                    if (!isEqual) {
+                        if (instancePropVal !== undefined) {
+                            _l.debug(me, "Overwriting the existing value of property {0}".fmt(instanceProp))
+                        }
+
+                        this[instanceProp] = config[prop];
+                    }
+                }
             }
+            
+            // Set defaults for undefined properties
+            if (_.obj(defaults)) {
+                var props = Object.getOwnPropertyNames(defaults);
+                for (var propIdx in props) {
+                    var prop            = props[propIdx];
+                    var instanceProp    = "_" + prop;
 
-            var props = Object.getOwnPropertyNames(config);
-            for (var propIdx in props) {
-                var prop            = props[propIdx];
-                var instanceProp    = "_" + prop;
-
-                if (this[instanceProp] === undefined) {
-                    this[instanceProp] = config[prop];
-                } else {
-                    _l.debug(me, "Skipping property {0} because it already exists in instance".fmt(instanceProp))
+                    if (this[instanceProp] === undefined) {
+                        this[instanceProp] = defaults[prop];
+                    }
                 }
             }
         }

@@ -119,6 +119,11 @@
             return utils.func(C) && (C === C.prototype.constructor);
         };
 
+        _mustNOTexist(utils.int, "int");
+        utils.int = utils.int || function(arg) {
+            return utils.number(arg) && (arg % 1 === 0);
+        };
+
         _mustNOTexist(utils.equals, "equals");
         /**
          *
@@ -229,14 +234,13 @@
             if (!utils.func(sureFunc)) {
                 sureFunc = function() {};
                 if (utils.def(funcName)) {
-                    log.error("Utils::endureFunc : [{0}] is not a function, providing stand-in function".fmt(funcName));
+                    log.error("Utils::ensureFunc", "[{0}] is not a function, providing stand-in function".fmt(funcName));
                 }
             }
 
             return sureFunc;
         };
 
-        _mustNOTexist(utils.now, "now");
         utils.now = utils.now || function () {
             return (new Date()).getTime();
         };
@@ -370,7 +374,148 @@
             }
 
             return s;
-        }
+        };
+        
+        _mustNOTexist("parsableToNumber");
+        utils.parsableToNumber = utils.parsableToNumber || function(number) {
+            return !isNaN(number);
+        };
+        
+        _mustNOTexist("removeFrom");
+        utils.removeFrom = utils.removeFrom || function(from, element, description) {
+            var me  = "Utils::removeFrom";
+            
+            var removed = -1;
+            
+            if(!utils.array(from)) {
+                if(utils.def(description)) {
+                    log.warn(me, "Cannot remove element. [{0}] is not an array.".fmt(description));
+                }
+                return -1;
+            }
+            if(!utils.def(element)) {
+                if(utils.def(description)) {
+                    log.warn(me, "Cannot remove undefined element from [{0}].");
+                }
+                return -1;
+            }
+            
+            // Remove all references to the element
+            for(var i = 0; i < from.length; i++) {
+                if(from[i] === element) {
+                    from.splice(i, 1);
+                    i--;
+                    removed++;
+                }
+            }
+            
+            return removed;
+        };
+
+        _mustNOTexist("hasValue");
+        /**
+         *
+         * Returns if a property of object obj has a value val
+         *
+         * @param {object} obj
+         * @param {*} val
+         * @param {string} [objDescription]
+         *
+         * @returns {boolean}
+         *
+         */
+        utils.hasValue = utils.hasValue || function(obj, val, objDescription) {
+            var me = "Utils::hasValue";
+
+            if (!utils.obj(obj)) {
+                if (utils.def(objDescription)) {
+                    log.warn(me, "[{0}] is not an object, value not found.".fmt(objDescription));
+                    return false;
+                }
+            }
+
+            for (var prop in obj) {
+                if(obj.hasOwnProperty(prop) && obj[prop] === val) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        _mustNOTexist("findProp");
+        /**
+         *
+         * Returns first property name of obj that has value val
+         *
+         * @param {object} obj
+         * @param {*} val
+         * @param {string} [objDescription]
+         *
+         * @returns {string|null}   Property name if found, else null
+         *
+         */
+        utils.findProp = utils.findProp || function(obj, val, objDescription) {
+                    var me = "Utils::findProp";
+
+                    if (!utils.obj(obj)) {
+                        if (utils.def(objDescription)) {
+                            log.warn(me, ("[{0}] is not an object, " +
+                                          "unable to find property with value.").fmt(objDescription));
+                            return false;
+                        }
+                    }
+
+                    for (var prop in obj) {
+                        if(obj.hasOwnProperty(prop) && obj[prop] === val) {
+                            return prop;
+                        }
+                    }
+                    return null;
+                };
+
+        _mustNOTexist("allOccurrences");
+        /**
+         *
+         * Find indices of all occurrences of value in list
+         *
+         * @param {array|string}   list
+         * @param {*} value
+         *
+         * @returns {array|null}           On success an array of indices is returned, on error null
+         *
+         */
+        var allOccurrences = function(list, value) {
+            var me = "Utils::allOccurrences";
+
+            if (!utils.array(list) && !utils.string(list)) {
+                log.error(me, "Given list is not an array or string");
+                return null;
+            }
+
+            if (utils.string(list) && !utils.string(value)) {
+                log.error(me, "Unable to search for a non string value in a string");
+                return null;
+            }
+
+            if (utils.string(list) && utils.string(value) && utils.empty(value)) {
+                log.warn(me, "Unable to search for an empty string in a string");
+                return [];
+            }
+
+            var startIndex  = 0;
+            var index       = -1;
+            var indices     = [];
+
+            var listLen     = list.length;
+
+            while ((index = list.indexOf(value, startIndex)) > -1) {
+                indices.push(index);
+                startIndex = index + 1;
+            }
+
+            return indices;
+        };
+        utils.allOccurrences = utils.allOccurrences || allOccurrences;
     };
 
 })();

@@ -22,6 +22,7 @@
         require('./utils/utils-base.js').UtilsBase.addTo(_u, _l);
         require('./utils/utils-strings.js').UtilsStrings.addTo(_u, _l);
         require('./utils/utils-execution.js').UtilsExecution.addTo(_u, _l);
+        require('./utils/utils-validation.js').UtilsValidation.addTo(_u, _l);
 
     } else {
         //Add to Visionscapers namespace
@@ -53,6 +54,13 @@
         } else {
             _l.error(me, "Namespace does not contain valid UtilsExecution utility extender, " +
             "unable to extend utils object with execution utils");
+        }
+
+        if (__isOk(NS.UtilsValidation)) {
+            NS.UtilsValidation.addTo(_u, _l);
+        } else {
+            _l.error(me, "Namespace does not contain valid UtilsValidation utility extender, " +
+                    "unable to extend utils object with validation utils");
         }
     }
 

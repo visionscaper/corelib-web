@@ -130,18 +130,30 @@
          * @param {Array} [interfaceDef.methods=[]]         Array with method names
          * @param {Array} [interfaceDef.properties=[]]      Array with property names
          *
-         * @param {String} [description=null]               When the description string not is empty (and not null) the
+         * @param {String|True} [description=null]          When the description string not is empty (and not null) the
          *                                                  function will log messages (including the description) when
          *                                                  necessary. When it is empty or null, no logging is performed
+         *
+         *                                                  When description === true it is attempted to convert the
+         *                                                  given obj in to a string representation.
          *
          */
         var interfaceAdheres = function (obj, interfaceDef, description) {
             var me = "Utils::adheresToInterface";
             var adheres = false;
 
+            if (description === true) {
+                description = obj+"";
+            }
+
             var doLog = !utils.empty(description);
 
             if (!utils.obj(obj) && !utils.func(obj)) {
+                if (doLog) {
+                    log.error(me, ("{0} is not a valid object, " +
+                                   "it does not adhere to given interface").fmt(description));
+                }
+
                 return adheres;
             }
 
@@ -223,8 +235,15 @@
          *                                              dataIn, errIn are the data and error information provided by the
          *                                              previously called function.
          *
+         *                                              errIn contains all errors that occurred in previous steps
+         *                                              when forceComplete = true.
+         *
          *                                              Every func1...N calls cbReady(dataOut, errOut)
          *                                              If no error, err is undefined or null
+         *
+         *                                              IMPORTANT : DON'T FEED BACK errIn IN TO cbReady AS errOut.
+         *                                              When you do that the original error gets duplicated as a
+         *                                              nested error. errOut is the error occurred in a step.
          *
          * @param {function} allCallsCompletedCb        function(data, err) Calls this function if all functions are ready
          *                                              or when forceComplete=false and any function calls cbReady with
@@ -258,7 +277,7 @@
          *  }
          *
          */
-        var execInSeries = function (funcHash, allCallsCompletedCb, forceComplete) {
+        var execInSeries = function(funcHash, allCallsCompletedCb, forceComplete) {
             var me = "Utils::execInSeries";
 
             allCallsCompletedCb = utils.ensureFunc(allCallsCompletedCb);
@@ -294,27 +313,36 @@
 
             var numFuncs        = funcNameList.length;
 
-            var __funcReady     = function (dataIn, errIn) {
-                var _errIn = errIn;
+            var errorPile       = {};
 
+            var __funcReady     = function(dataIn, errIn) {
                 if (utils.def(errIn)) {
-                    _errIn = {
-                        message: 'function [' + funcNameList[funcIdx] + '] reported an error',
-                        originalError: errIn
-                    };
-
                     if (!forceComplete) {
-                        allCallsCompletedCb(dataIn, _errIn);
+                        errIn = {
+                            message: 'function [' + funcNameList[funcIdx] + '] reported an error',
+                            originalError: errIn
+                        };
+
+                        allCallsCompletedCb(dataIn, errIn);
                         return;
                     } else {
-                        log.warn(me, '{0}. Continuing despite error ...'.fmt(_errIn.message));
+                        errorPile[funcNameList[funcIdx]] = errIn;
                     }
                 }
 
-                __nextFunc(dataIn, _errIn);
+                if (!utils.empty(errorPile)) {
+                    errIn = {
+                        message         : "Error(s) occurred executing steps in series",
+                        originalError   : {
+                            error_hash : utils.clone(errorPile)
+                        }
+                    };
+                }
+
+                __nextFunc(dataIn, errIn);
             };
 
-            var __nextFunc = function (dataIn, errIn) {
+            var __nextFunc = function(dataIn, errIn) {
                 var _errIn = errIn;
 
                 funcIdx++;
@@ -331,13 +359,9 @@
                         }
                     } else {
                         _errIn = {
-                            message: 'Function hash entry [{0}] is not a function, ' +
-                            'unable execute'.fmt(nextFuncName)
+                            message: ('Function hash entry [{0}] is not a function, ' +
+                                      'unable execute').fmt(nextFuncName)
                         };
-
-                        if (utils.def(errIn)) {
-                            _errIn.originalError = errIn;
-                        }
 
                         __funcReady(dataIn, _errIn);
                     }
