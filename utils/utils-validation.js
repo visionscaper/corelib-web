@@ -231,18 +231,14 @@
             var results = {};
             for(var i in validated) {
                 if(utils.has(validated[i], 'error')) {
-                    errors[i] = {
-                        message: validated[i].error
-                    };
+                    errors[i] = validated[i].error;
                     if(!hasCallback) {
                         valueError(me, i, utils.get(validated[i], 'original'), utils.get(validated[i], 'error.message'));
                     }
                     valid = false;
                 }
                 if(utils.has(validated[i], 'warning')) {
-                    warnings[i] = {
-                        message: validated[i].warning
-                    };
+                    warnings[i] = validated[i].warning;
                     if(!hasCallback) {
                         valueWarn(me, i, utils.get(validated[i], 'original'), utils.get(validated[i], 'warning.message'));
                     }
