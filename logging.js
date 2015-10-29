@@ -117,7 +117,11 @@
                 limit = 0;
             }
 
-            var stack = new Error('').stack.split("\n");
+            var err = new Error('');
+            var stack = [];
+            if(_u.string(err.stack)) {
+                stack = err.stack.split("\n");
+            }
 
             // If first line is arbitrary (error) line
             if(_u.string(stack[0])) {
