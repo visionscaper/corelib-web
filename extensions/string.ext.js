@@ -9,7 +9,7 @@ if (!String.prototype.fmt) {
     String.prototype.fmt = function() {
         var args = arguments;
         return this.replace(/{(\d+)}/g, function(match, number) {
-            return (typeof args[number] != 'undefined') ? args[number] : match;
+            return (number < args.length) ? args[number] : match;
         });
     };
 }
