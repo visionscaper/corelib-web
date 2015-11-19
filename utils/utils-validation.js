@@ -68,18 +68,17 @@
         utils._mustNOTexist("valueWarn");
         var badValueMessage = function(name, value, why, defaultTo) {
             var messages = [];
-            messages.push("Bad value for: {0}.".fmt(name));
+            messages.push("Bad value for '{0}'.".fmt(name));
             if(utils.isObject(why)) {
-                messages.push("| Expected structure:");
+                messages.push("Expected structure:");
                 messages.push(why);
             } else {
-                messages.push("| Reason:");
                 messages.push(why);
             }
-            messages.push("| Value:");
+            messages.push("Given: ");
             messages.push(value);
             if(arguments.length === 4) {
-                messages.push("| Default:");
+                messages.push("Using default:");
                 messages.push(defaultTo);
             }
             return messages;
@@ -88,8 +87,8 @@
             var messages = badValueMessage(name, value, why);
             log.log('error', me, messages, {stackOffset: 3});
         };
-        var valueWarn = function(me, name, value, why) {
-            var messages = badValueMessage(name, value, why);
+        var valueWarn = function(me, name, value, why, defaultTo) {
+            var messages = badValueMessage(name, value, why, defaultTo);
             log.log('warn', me, messages, {stackOffset: 3});
         };
         utils.valueError = utils.valueError || valueError;
@@ -119,12 +118,17 @@
          * @param {string|bool} method      Boolean check for validity, or name of util for validation.
          * @param {message} [message]       [Optional] The message to display when variable is not valid.
          * @param {object} options          An object of extra option.
-         * @param [options.default]         A default value if given value is invalid. If not provided, validation will fail.
+         * @param [options.default]         A default value if given value is invalid. If not provided, validation will fail if invalid value.
          * @param {bool} [options.warn]     If false, no warning will be given if default is chosen. Defaults to true.
          *
-         * @returns {object|bool}           If validation was passed, an object will be returned containing a key equal
-         *                                  the given name, with the validated value.
-         *                                  If validation fails, FALSE will be returned.
+         * @return {object}                 Result object with following properties:
+         *                                      name        Name of the variable.
+         *                                      original    Given value of the variable.
+         *                                      valid       Validated value of the variable.
+         *                                      [warning]   [if available] The warning object {message: ...} issued for
+         *                                                      this variable.
+         *                                      [error]     [if available] The error object {message: ...} issued for
+         *                                                      this variable.
          */
         var validateOne = function(me, name, value, method, message, options) {
             var valid = true;
@@ -142,7 +146,6 @@
             } else if (utils.string(method)) {
                 // Method doesn't exist
                 if(!utils.func(utils[method])) {
-                    valueError(me, name, value, "Don't know how to validate '{0}'.".fmt(method));
                     message = "Don't know how to validate '{0}'.".fmt(method);
                     valid = false;
                 } else {
@@ -229,18 +232,28 @@
             var warnings = {};
             var valid = true;
             var results = {};
+            var original, error, warning, validValue;
             for(var i in validated) {
-                if(utils.has(validated[i], 'error')) {
-                    errors[i] = validated[i].error;
+                original = utils.get(validated[i], 'original');
+                error = utils.get(validated[i], 'error');
+                warning = utils.get(validated[i], 'warning');
+                validValue = utils.get(validated[i], 'valid');
+                if(utils.obj(error)) {
+                    errors[i] = error;
+
                     if(!hasCallback) {
-                        valueError(me, i, utils.get(validated[i], 'original'), utils.get(validated[i], 'error.message'));
+                        valueError(me, i, original, error.message);
+                    } else {
+                        error.message = badValueMessage(i, utils.stringify(original), error.message).join(' ');
                     }
                     valid = false;
                 }
-                if(utils.has(validated[i], 'warning')) {
-                    warnings[i] = validated[i].warning;
+                if(utils.obj(warning)) {
+                    warnings[i] = warning;
                     if(!hasCallback) {
-                        valueWarn(me, i, utils.get(validated[i], 'original'), utils.get(validated[i], 'warning.message'));
+                        valueWarn(me, i, original, warning.message, validValue);
+                    } else {
+                        warning.message = badValueMessage(i, utils.stringify(original), warning.message, utils.stringify(validValue)).join(' ');
                     }
                 }
 
@@ -252,7 +265,7 @@
             if(hasCallback && !valid) {
                 errCallback(null, {
                     message: consequence,
-                    originalError: errors
+                    error_hash: errors
                 });
             }
 

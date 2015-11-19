@@ -514,6 +514,27 @@
             return indices;
         };
         utils.allOccurrences = utils.allOccurrences || allOccurrences;
+
+        _mustNOTexist("inRange");
+        var inRange = function(number, min, max) {
+            return utils.number(number) &&
+                            number >= min &&
+                            number <= max;
+        };
+        utils.inRange = utils.inRange || inRange;
+
+        _mustNOTexist("clip");
+        var clip = function(number, min, max) {
+            var me = "Utils::clip";
+            if(!utils.number(number)) {
+                utils.warn(me, "Argument ({0}) is not a number. Defaulting to minimum ({1}).".fmt(number, min));
+                return min;
+            }
+            if(number < min) return min;
+            if(number > max) return max;
+            return number;
+        };
+        utils.clip = utils.clip || clip;
     };
 
 })();
