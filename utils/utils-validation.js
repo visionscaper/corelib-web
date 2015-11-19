@@ -67,6 +67,11 @@
         utils._mustNOTexist("valueError");
         utils._mustNOTexist("valueWarn");
         var badValueMessage = function(name, value, why, defaultTo) {
+            // If reason does not end with full stop, add one.
+            if(!/\.\s*?/.exec(why)) {
+                why += '.';
+            }
+
             var messages = [];
             messages.push("Bad value for '{0}'.".fmt(name));
             if(utils.isObject(why)) {
@@ -139,34 +144,40 @@
 
             var result = { name: name, original: value };
 
-            // Direct method
-            if(method === false) {
-                valid = false;
-            // Util method
-            } else if (utils.string(method)) {
-                // Method doesn't exist
-                if(!utils.func(utils[method])) {
+            // Get method from utils, if method is string
+            if(utils.string(method)) {
+                // Get function from utils
+                method = utils[method];
+                if(!utils.func(method)) {
                     message = "Don't know how to validate '{0}'.".fmt(method);
-                    valid = false;
-                } else {
-                    // Apply util method
-                    if (!utils[method].apply(utils, [value])) {
-                        valid = false;
-                        if (!utils.def(message)) {
-                            if (utils.has(validationMessages, method)) {
-                                message = validationMessages[method];
-                            } else {
-                                message = "Must be {0}.".fmt(method);
-                            }
-                        }
+                    method = false;
+                }
+                // If no message is provided, try to find one from validationMessages
+                if (!utils.def(message)) {
+                    if (utils.has(validationMessages, method)) {
+                        message = validationMessages[method];
+                    } else {
+                        message = "Must be {0}.".fmt(method);
                     }
                 }
             }
 
+            // No message provided or found, go for generic.
             if(!utils.def(message)) {
                 message = "Invalid.";
             }
 
+            // Apply validation method
+            if(utils.func(method)) {
+                if (!method.apply(utils, [value])) {
+                    valid = false;
+                }
+            // Boolean validation
+            } else {
+                valid = method === true;
+            }
+
+            // Feedback
             if(!valid) {
                 if(utils.obj(options) && utils.has(options, 'default')) {
                     if(utils.get(options, 'warn') !== false) {
