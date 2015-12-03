@@ -163,9 +163,10 @@
 
                 var i       = null;
 
+                var propertiesV1, propertiesV2;
                 if (!isArray && !isDataMap) {
-                    var propertiesV1 = Object.getOwnPropertyNames(v1);
-                    var propertiesV2 = Object.getOwnPropertyNames(v2);
+                    propertiesV1 = Object.getOwnPropertyNames(v1);
+                    propertiesV2 = Object.getOwnPropertyNames(v2);
 
                     isEqual = propertiesV1.length == propertiesV2.length;
                     if (!isEqual) {
@@ -183,8 +184,8 @@
 
                     return isEqual;
                 } else if (isDataMap) {
-                    var propertiesV1 = v1.getAllKeys();
-                    var propertiesV2 = v2.getAllKeys();
+                    propertiesV1 = v1.getAllKeys();
+                    propertiesV2 = v2.getAllKeys();
 
                     isEqual = propertiesV1.length == propertiesV2.length;
                     if (!isEqual) {
@@ -270,7 +271,7 @@
 
             var pathTravelled = "";
 
-            var value = obj;
+            value = obj;
             for (var idx = 0; idx < numProps; idx++) {
                 prop = props[idx];
 
