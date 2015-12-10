@@ -116,7 +116,9 @@
             parsableToNumber: "Must be parsable to Number."
         };
         /**
+         *
          * Validates a value, based on the given parameters
+         *
          * @param {string} me               The identity of the checker.
          * @param {string} name             The name of the variable to check.
          * @param value                     The value of the variable to check.
@@ -137,7 +139,7 @@
          */
         var validateOne = function(me, name, value, method, message, options) {
             var valid = true;
-            if(utils.obj(message)) { // message was ommitted
+            if(utils.obj(message)) { // message was omitted
                 options = message;
                 message = undefined;
             }
@@ -201,11 +203,16 @@
         utils._mustNOTexist("validate");
         /**
          * Validates a set of values, based on the given parameters
+         *
+         * TODO : FS 24112015 : add a few examples that spans the usage space
+         *
          * @param {string} me               The identity of the checker.
          * @param {object} checks           An object of checks. Where the keys are the names of the variables and the
-         *                                  values arrays of parameters that are passed to {@link utils.validateOne}, prepended by
-         *                                  <me> and <checks>.
+         *                                  values arrays of parameters that are passed to {@link utils.validateOne},
+         *                                  prepended by <me> and <checks>.
          * @param {string} consequence      A message to be given if validation fails.
+         *
+         * TODO FS 24112015 : define parameter errCallback
          *
          * @returns {object|bool}           If validation was passed, an object will be returned containing a the keys
          *                                  of the given checks object, with their validated values.
@@ -216,6 +223,7 @@
             var hasCallback = utils.func(errCallback);
 
             if(utils.obj(checks)) {
+                //TODO : FS 24112015 : better name i
                 for(var i in checks) {
                     checks[i].unshift(i);
                     checks[i].unshift(me);
@@ -230,7 +238,7 @@
                 } else {
                     log.error(me, "Cannot validate. Parameter 'checks' must be object.", checks);
 
-                    //TODO : this does not seem to be correct
+                    //TODO : FS 24112015 : this does not seem to be correct
                     if(!utils.def(consequence)) {
                         log.error(consequence);
                     }
@@ -244,6 +252,7 @@
             var valid = true;
             var results = {};
             var original, error, warning, validValue;
+            //TODO : FS 24112015 : better name i
             for(var i in validated) {
                 original = utils.get(validated[i], 'original');
                 error = utils.get(validated[i], 'error');

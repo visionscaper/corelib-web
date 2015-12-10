@@ -158,10 +158,8 @@
             }
 
             if (!utils.obj(interfaceDef)) {
-                if (doLog) {
-                    log.warn(me, ("No valid interface definition given for {0}, " +
-                                  "unable to test interface adherence").fmt(description));
-                }
+                log.warn(me, ("No valid interface definition given for {0}, " +
+                              "unable to test interface adherence").fmt(description));
                 return adheres;
             }
 
