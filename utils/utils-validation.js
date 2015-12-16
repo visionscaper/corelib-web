@@ -149,11 +149,8 @@
             // Get method from utils, if method is string
             if(utils.string(method)) {
                 // Get function from utils
-                method = utils[method];
-                if(!utils.func(method)) {
-                    message = "Don't know how to validate '{0}'.".fmt(method);
-                    method = false;
-                }
+                var utilMethod = utils[method];
+
                 // If no message is provided, try to find one from validationMessages
                 if (!utils.def(message)) {
                     if (utils.has(validationMessages, method)) {
@@ -161,6 +158,12 @@
                     } else {
                         message = "Must be {0}.".fmt(method);
                     }
+                }
+                if(!utils.func(utilMethod)) {
+                    message = "Don't know how to validate '{0}'.".fmt(method);
+                    method = false;
+                } else {
+                    method = utilMethod;
                 }
             }
 

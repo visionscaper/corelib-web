@@ -258,14 +258,15 @@
                 return value;
             }
 
-            if (!utils.string(path) || utils.empty(path)) {
+            // Path must be a non-empty string or a number
+            if (!(utils.number(path) || (utils.string(path) && !utils.empty(path))) ) {
                 if (describe) {
                     log.error(me, "path to property is invalid, can't get property of [{0}] object".fmt(objName));
                 }
                 return value;
             }
 
-            var props = path.split(".");
+            var props = utils.string(path) ? path.split('.') : [path];
             var numProps = props.length;
             var prop = null;
 
