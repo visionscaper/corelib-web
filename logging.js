@@ -392,9 +392,13 @@
             return coloredTxt;
         },
 
-        _prefix  : function(me, level) {
+        _prefix  : function(me, level, noMessage) {
             var _u = Logging.Logger.utils;
             var levelName       = this._levelNames[level];
+
+            if (!_u.def(noMessage)) {
+                noMessage = false;
+            }
 
             //Ensure that all level names have the same length
             var levelNameLength = _u.string(levelName) ? levelName.length : ((levelName + " ").length-1);
@@ -404,17 +408,23 @@
             var meLength        = _u.string(me) ? me.length : 0;
             if (meLength > 0) {
 
-                if (meLength < this._minMeLength) {
-                    gap = Array(this._minMeLength-meLength+1).join(" ");
-                    me  = me + gap;
-                } else {
-                    if (meLength <= this._maxMeLength) {
-                        this._minMeLength = meLength;
+                if (!noMessage) {
+                    if (meLength < this._minMeLength) {
+                        gap = Array(this._minMeLength-meLength+1).join(" ");
+                        me  = me + gap;
+                    } else {
+                        if (meLength <= this._maxMeLength) {
+                            this._minMeLength = meLength;
+                        }
                     }
+
+                    preFix += me + " : "
+                } else {
+                    preFix += me;
                 }
 
-                preFix += me + " : "
             }
+
             return preFix;
         },
 
@@ -444,9 +454,8 @@
                 return;
             }
 
-            message = message || "[NO MESSAGE GIVEN]";
-
-            var preFix = this._prefix(me, level);
+            message = message || "";
+            var preFix = this._prefix(me, level, message.length < 1);
 
             // Get stack trace
             var stack = undefined;

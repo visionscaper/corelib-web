@@ -379,7 +379,7 @@
         utils.parsableToNumber = utils.parsableToNumber || function(number) {
             return !isNaN(number);
         };
-        
+
         _mustNOTexist("removeFrom");
         utils.removeFrom = utils.removeFrom || function(from, element, description) {
             var me  = "Utils::removeFrom";
