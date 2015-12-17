@@ -318,7 +318,10 @@
                     if (!forceComplete) {
                         errIn = {
                             message: 'function [' + funcNameList[funcIdx] + '] reported an error',
-                            originalError: errIn
+                            originalError: errIn,
+
+                            //error message is for debug purposes, the original error is the real error
+                            debug : true
                         };
 
                         allCallsCompletedCb(dataIn, errIn);
@@ -333,7 +336,10 @@
                         message         : "Error(s) occurred executing steps in series",
                         originalError   : {
                             error_hash : utils.clone(errorPile)
-                        }
+                        },
+
+                        //error message is for debug purposes, the original error is the real error
+                        debug : true
                     };
                 }
 
@@ -492,8 +498,11 @@
 
                     if (utils.def(err)) {
                         _err = {
-                            message: "[{0}] function reported ERROR".fmt(funcName),
-                            originalError: err
+                            message: "[{0}] function reported an error".fmt(funcName),
+                            originalError: err,
+
+                            //error message is for debug purposes, the original error is the real error
+                            debug : true
                         };
 
                         funcErr[funcName] = _err;
