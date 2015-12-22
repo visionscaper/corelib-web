@@ -11,6 +11,10 @@ External dependencies:
 Utils are tested with:
 
  * Underscorejs : https://github.com/jashkenas/underscore/
+ 
+When used with node.js do:
+ 
+    npm install
 
 
 

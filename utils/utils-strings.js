@@ -10,6 +10,9 @@
     if (__isNode) {
         require("../extensions/string.ext.js");
 
+        var jsdom       = require("jsdom");
+        var document    = jsdom.jsdom("");
+
         NS = exports;
     } else {
         //Add to Visionscapers namespace
@@ -320,6 +323,38 @@
             return sInserted;
         };
         utils.insertBeforeLast = utils.insertBeforeLast || insertBeforeLast;
+
+        utils._mustNOTexist("stripScripts");
+        /**
+         *
+         * Strip scripts from html string
+         *
+         * @param {string} html
+         *
+         * @returns {null | string}
+         */
+        function stripScripts(html) {
+            if (!utils.string(html)) {
+                return null;
+            }
+
+            if (utils.empty(html)) {
+                return "";
+            }
+
+            var div = document.createElement('div');
+            div.innerHTML = html;
+
+            var scripts = div.getElementsByTagName('script');
+            var i = scripts.length;
+            while (i--) {
+                scripts[i].parentNode.removeChild(scripts[i]);
+            }
+
+            return div.innerHTML;
+        }
+        utils.stripScripts = utils.stripScripts || stripScripts;
+
     };
 
 })();
