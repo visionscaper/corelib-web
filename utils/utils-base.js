@@ -122,6 +122,17 @@
             return utils.number(arg) && (arg % 1 === 0);
         };
 
+        _mustNOTexist("instanceof");
+        utils.instanceof = utils.instanceof || function(checkClass, arg) {
+            if(!utils.def(arg)) {
+                return function(futureArg) {
+                    return utils.instanceof(checkClass, futureArg);
+                }
+            } else {
+                return arg instanceof checkClass;
+            }
+        };
+
         _mustNOTexist("equals");
         /**
          *
