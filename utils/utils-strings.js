@@ -355,6 +355,33 @@
         }
         utils.stripScripts = utils.stripScripts || stripScripts;
 
+        utils._mustNOTexist("toText");
+        /**
+         *
+         * Strip scripts from html string and convert in to plain text
+         *
+         * @param {string} html
+         *
+         * @returns {null | string}
+         */
+        function toText(html) {
+            html = utils.stripScripts(html);
+
+            if (!utils.string(html)) {
+                return null;
+            }
+
+            if (utils.empty(html)) {
+                return "";
+            }
+
+            var div = document.createElement('div');
+            div.innerHTML = html;
+
+            return div.textContent;
+        }
+        utils.toText = utils.toText || toText;
+
     };
 
 })();
