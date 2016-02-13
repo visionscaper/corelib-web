@@ -42,7 +42,7 @@
          * Every config <property> is stored as _<property> (with underscore in front) in the instance.
          *
          * @class   Configurable
-         * @module  M*C
+         * @module  corelib-web
          *
          */
 
