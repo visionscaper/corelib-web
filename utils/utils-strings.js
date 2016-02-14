@@ -17,6 +17,8 @@
     } else {
         //Add to Visionscapers namespace
         NS = window["__VI__"] || window;
+
+        var document    = window.document;
     }
 
     //using underscore.js _ as base object
@@ -163,10 +165,41 @@
         };
         utils.url = utils.url || url;
 
+
+        utils._mustNOTexist("request");
+        /**
+         *
+         * Get the request part from a URL. If no URL is given it uses the
+         *
+         * @param url
+         *
+         */
+        var request = function(url) {
+            if (!utils.string(url) || utils.empty(url)) {
+                if (typeof(window) === 'undefined') {
+                    log.warn("utils::request", "No window object available, unable to get current URL.");
+                    return null;
+                }
+
+                url = utils.get(window, "location.href") || "";
+            }
+
+            var a = document.createElement('a');
+            a.href = url;
+
+            //protocol://host
+            return url.substring(a.protocol.length + a.host.length + 2);
+        };
+        utils.request = utils.request || request;
+
         utils._mustNOTexist("trim");
         //From https://github.com/visionmedia/superagent
         var trim = function (s) {
-            return s.replace(/(^\s*|\s*$)/g, '');
+            if (utils.string(s)) {
+                return s.replace(/(^\s*|\s*$)/g, '');
+            } else {
+                return null;
+            }
         };
         utils.trim = utils.trim || trim;
 
