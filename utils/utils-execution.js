@@ -20,23 +20,23 @@
     NS.UtilsExecution = {};
     NS.UtilsExecution.addTo = function(utils, log) {
 
-        if (typeof(log) != "object") {
+        if (log !== Object(log)) {
             console.warn("UtilsExecution : no logging object provided, using browser console logger");
             log = console;
         }
 
-        if ((typeof(utils) != "object") && (typeof(utils) != "function")) {
+        if ((utils !== Object(utils)) && (typeof(utils) != "function")) {
             log.error("UtilsExecution", "No valid utils object given, not adding execution utils");
             return;
         }
 
-        if ((typeof(utils._utilsComponents) != "object") || (!utils._utilsComponents["base"])) {
+        if ((utils._utilsComponents !== Object(utils._utilsComponents)) || (!utils._utilsComponents["base"])) {
             log.error("UtilsExecution", "This utils component needs the base utils component, " +
                       "not adding execution utils");
             return;
         }
 
-        if ((typeof(utils._utilsComponents) != "object") || (!utils._utilsComponents["strings"])) {
+        if ((utils._utilsComponents !== Object(utils._utilsComponents)) || (!utils._utilsComponents["strings"])) {
             log.error("UtilsExecution", "This utils component needs the strings utils component, " +
                       "not adding execution utils");
             return;

@@ -513,7 +513,7 @@
         },
 
         object : function(o) {
-            return (typeof(o) === "object");
+            return (o === Object(o));
         },
 
         string : function(s) {

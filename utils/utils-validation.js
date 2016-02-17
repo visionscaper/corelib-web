@@ -19,22 +19,22 @@
     NS.UtilsValidation = {};
     NS.UtilsValidation.addTo = function (utils, log) {
 
-        if (typeof(log) != "object") {
+        if (log !== Object(log)) {
             console.warn("UtilsValidation : no logging object provided, using browser console logger");
             log = console;
         }
 
-        if ((typeof(utils) != "object") && (typeof(utils) != "function")) {
+        if ((utils !== Object(utils)) && (typeof(utils) != "function")) {
             log.error("UtilsValidation", "No valid utils object given, not adding utils");
             return;
         }
 
-        if ((typeof(utils._utilsComponents) != "object") || (!utils._utilsComponents["execution"])) {
+        if ((utils._utilsComponents !== Object(utils._utilsComponents)) || (!utils._utilsComponents["execution"])) {
             log.error("UtilsValidation", "This utils component needs the execution utils component, not adding utils");
             return;
         }
 
-        if ((typeof(utils._utilsComponents) != "object") || (!utils._utilsComponents["base"])) {
+        if ((utils._utilsComponents !== Object(utils._utilsComponents)) || (!utils._utilsComponents["base"])) {
             log.error("UtilsValidation", "This utils component needs the base utils component, not adding utils");
             return;
         }

@@ -4,21 +4,23 @@
 
 
 (function() {
-    var NS = null;
+    var NS          = null;
 
-    var __isNode = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
+    var document    = null;
+
+    var __isNode    = (typeof module !== 'undefined' && typeof module.exports !== 'undefined');
     if (__isNode) {
         require("../extensions/string.ext.js");
 
         var jsdom       = require("jsdom");
-        var document    = jsdom.jsdom("");
+        document        = jsdom.jsdom("");
 
         NS = exports;
     } else {
         //Add to Visionscapers namespace
         NS = window["__VI__"] || window;
 
-        var document    = window.document;
+        document        = window.document;
     }
 
     //using underscore.js _ as base object
@@ -26,17 +28,17 @@
     NS.UtilsStrings = {};
     NS.UtilsStrings.addTo = function (utils, log) {
 
-        if (typeof(log) != "object") {
+        if (log !== Object(log)) {
             console.warn("UtilsStrings : no logging object provided, using browser console logger");
             log = console;
         }
 
-        if ((typeof(utils) != "object") && (typeof(utils) != "function")) {
+        if ((utils !== Object(utils)) && (typeof(utils) != "function")) {
             log.error("UtilsStrings", "No valid utils object given, not adding utils");
             return;
         }
 
-        if ((typeof(utils._utilsComponents) != "object") || (!utils._utilsComponents["base"])) {
+        if ((utils._utilsComponents !== Object(utils._utilsComponents)) || (!utils._utilsComponents["base"])) {
             log.error("UtilsStrings", "This utils component needs the base utils component, not adding utils");
             return;
         }
@@ -144,24 +146,39 @@
 
 
         utils._mustNOTexist("url");
-        var URLPattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+        var URLPatternDev   = new RegExp('^(https?:\\/\\/)?' + // protocol
         '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '((\\d{1,3}\\.){3}\\d{1,3})|' + // OR ip (v4) address
+        '(localhost))' + // OR 'localhost'
         '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
         '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
         '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+
+        var URLPattern      = new RegExp('^(https?:\\/\\/)?' + // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+                '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
 
         /**
          *
          * Returns true if given string is a valid URL, else false
          *
-         * @param {String} str     string to be tested
+         * @param {String} str              string to be tested
+         * @param {Boolean} [dev=false]     if dev is true 'localhost' is allowed as domain, else not
          *
          * @returns {boolean}
          *
          */
-        var url = function (str) {
-            return (URLPattern.test(str) === true);
+        var url = function (str, dev) {
+            if (!utils.bool(dev)) {
+                dev = false;
+            }
+
+            var pattern = dev ? URLPatternDev : URLPattern;
+
+            return (pattern.test(str) === true);
         };
         utils.url = utils.url || url;
 
@@ -169,7 +186,7 @@
         utils._mustNOTexist("request");
         /**
          *
-         * Get the request part from a URL. If no URL is given it uses the
+         * Get the request part from a URL. If no URL is given it tries to use the window.location.href
          *
          * @param url
          *
@@ -191,6 +208,57 @@
             return url.substring(a.protocol.length + a.host.length + 2);
         };
         utils.request = utils.request || request;
+
+        utils._mustNOTexist("URLQueryParams");
+        /**
+         *
+         * Get the query parameters of a URL as an object with the query parameters as properties.
+         * If no URL is given it tries to use the window.location.href.
+         *
+         * @param url
+         *
+         * @returns {object|null}
+         *
+         */
+        var URLQueryParams = function(url) {
+            var me = "utils::URLQueryParams";
+
+            if (!utils.string(url) || utils.empty(url)) {
+                if (typeof(window) === 'undefined') {
+                    log.warn(me, "No window object available, unable to get current URL.");
+                    return null;
+                }
+
+                url = utils.get(window, "location.href") || "";
+            }
+
+            var a = document.createElement('a');
+            a.href = url;
+
+            var queryParams     = {};
+
+            var query           = decodeURIComponent(a.search.substring(1));
+            if (_.empty(query)) {
+                return queryParams;
+            }
+
+            var queryComponents = query.split('&');
+
+            var keyValuePair    = null;
+            for (var i = 0; i < queryComponents.length; i++) {
+                keyValuePair = queryComponents[i].split('=');
+
+                if (keyValuePair.length < 2) {
+                    log.warn(me, "Invalid query key value pair, skipping : [{0}]".fmt(keyValuePair));
+                    continue;
+                }
+
+                queryParams[keyValuePair[0]] = keyValuePair[1];
+            }
+
+            return queryParams;
+        };
+        utils.URLQueryParams = utils.URLQueryParams || URLQueryParams;
 
         utils._mustNOTexist("trim");
         //From https://github.com/visionmedia/superagent

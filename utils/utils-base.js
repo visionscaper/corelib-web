@@ -26,12 +26,12 @@
     NS.UtilsBase = {};
     NS.UtilsBase.addTo = function (utils, log) {
 
-        if (typeof(log) != "object") {
+        if (log !== Object(log)) {
             console.warn("UtilsBase : no logging object provided, using browser console logger");
             log = console;
         }
 
-        if ((typeof(utils) != "object") && (typeof(utils) != "function")) {
+        if ((utils !== Object(utils)) && (typeof(utils) != "function")) {
             log.error("UtilsBase", "no valid utils object given, unable to extend");
             return;
         }
