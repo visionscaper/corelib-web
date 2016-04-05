@@ -204,8 +204,19 @@
             var a = document.createElement('a');
             a.href = url;
 
+            var host        = a.host || "";
+            var colonIdx    = host.indexOf(":");
+            if (colonIdx >= 0) {
+                //With colon
+                var port = host.substring(colonIdx);
+                //Only when the port is not specified in the original URL
+                if (url.indexOf(port) < 0) {
+                    host = host.substring(0, colonIdx);
+                }
+            }
+
             //protocol://host
-            return url.substring(a.protocol.length + a.host.length + 2);
+            return url.substring(a.protocol.length + host.length + 2);
         };
         utils.request = utils.request || request;
 
