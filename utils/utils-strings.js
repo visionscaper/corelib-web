@@ -204,6 +204,11 @@
             var a = document.createElement('a');
             a.href = url;
 
+            /************************************************************
+             *
+             * IE11 FIX :-P
+             *
+             ***********************************************************/
             var host        = a.host || "";
             var colonIdx    = host.indexOf(":");
             if (colonIdx >= 0) {
@@ -214,6 +219,11 @@
                     host = host.substring(0, colonIdx);
                 }
             }
+            /************************************************************
+             *
+             * END IE11 FIX
+             *
+             ***********************************************************/
 
             //protocol://host
             return url.substring(a.protocol.length + host.length + 2);
