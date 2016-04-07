@@ -288,7 +288,10 @@
             if(hasCallback && !valid) {
                 errCallback(null, {
                     message: consequence,
-                    error_hash: errors
+                    originalError: {
+                        error_hash: errors,
+                        debug: true
+                    }
                 });
             }
 
