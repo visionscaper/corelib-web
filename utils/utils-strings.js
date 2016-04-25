@@ -97,9 +97,11 @@
          *
          */
         var joinPaths = function (paths) {
+            var me = "Utils::joinPaths";
             var concatenated = null;
 
             if (!utils.array(paths)) {
+                _l.error(me, "Paths is not an array, unable to join paths");
                 return concatenated;
             }
 
