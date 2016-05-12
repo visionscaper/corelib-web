@@ -506,6 +506,46 @@
         }
         utils.toText = utils.toText || toText;
 
+        utils._mustNOTexist("csvToArray");
+        function csvToArray(string, separator) {
+            if(!utils.def(separator)) {
+                separator = ',';
+            }
+            var list    = utils.map(string.split(new RegExp('[/s]*'+separator+'[/s]*')), utils.trim);
+
+            // Trimp empty items from start and end
+            var firstItem = list[0];
+            if(utils.empty(firstItem)) {
+                list.shift();
+            }
+            var lastItem = list[list.length - 1];
+            if (utils.empty(lastItem)) {
+                list.pop();
+            }
+
+            return list;
+        }
+        utils.csvToArray = utils.csvToArray || csvToArray;
+
+        utils._mustNOTexist("plural");
+        function plural(string) {
+            if(!_.string(string)) {
+                return "things";
+            }
+
+            // Covers some irregular plurals
+            if(string.slice(-2) === 'us') {
+                return string.slice(0, string.length-2) + 'i';
+            }
+
+            if(string.slice(-1) === 's') {
+                return string + 'es';
+            }
+
+            return string + 's';
+        }
+        utils.plural = utils.plural || plural;
+
     };
 
 })();
