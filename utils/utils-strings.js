@@ -529,7 +529,7 @@
 
         utils._mustNOTexist("plural");
         function plural(string) {
-            if(!_.string(string)) {
+            if(!utils.string(string)) {
                 return "things";
             }
 
