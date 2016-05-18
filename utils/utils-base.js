@@ -251,6 +251,19 @@
             return sureFunc;
         };
 
+        _mustNOTexist("ensure");
+        utils.ensure = utils.ensure || function (variable, evalFunc, defaultValue, message) {
+                var sure = variable;
+                if (!evalFunc(variable)) {
+                    sure = defaultValue;
+                    if (utils.def(message)) {
+                        log.error("Utils::ensure", message, variable);
+                    }
+                }
+
+                return sure;
+            };
+
         utils.now = utils.now || function () {
             return (new Date()).getTime();
         };
