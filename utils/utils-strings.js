@@ -508,12 +508,15 @@
 
         utils._mustNOTexist("csvToArray");
         function csvToArray(string, separator) {
+            if (!utils.string(string)) {
+                return null;
+            }
             if(!utils.def(separator)) {
                 separator = ',';
             }
             var list    = utils.map(string.split(new RegExp('[/s]*'+separator+'[/s]*')), utils.trim);
 
-            // Trimp empty items from start and end
+            // Trim empty items from start and end
             var firstItem = list[0];
             if(utils.empty(firstItem)) {
                 list.shift();
@@ -529,7 +532,7 @@
 
         utils._mustNOTexist("plural");
         function plural(string) {
-            if(!_.string(string)) {
+            if(!utils.string(string)) {
                 return "things";
             }
 
@@ -545,6 +548,21 @@
             return string + 's';
         }
         utils.plural = utils.plural || plural;
+
+        utils._mustNOTexist("getFilenameFrom");
+        function getFilenameFrom(path) {
+            if (!utils.string(path)) {
+                return null;
+            }
+
+            var lastSlashIndex = path.lastIndexOf("/");
+            if (lastSlashIndex < 0) {
+                return path;
+            }
+
+            return path.substr(lastSlashIndex+1);
+        }
+        utils.getFilenameFrom = utils.getFilenameFrom || getFilenameFrom;
 
     };
 
