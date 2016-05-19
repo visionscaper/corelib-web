@@ -251,6 +251,19 @@
             return sureFunc;
         };
 
+        _mustNOTexist("ensureObj");
+        utils.ensureObj = utils.ensureObj || function (o, objDesc) {
+            var sureObj = o;
+            if (!utils.obj(sureObj)) {
+                sureObj = {};
+                if (utils.def(objDesc)) {
+                    log.error("Utils::ensureObj", "[{0}] is not an object, providing new object instance".fmt(objDesc));
+                }
+            }
+
+            return sureObj;
+        };
+
         _mustNOTexist("ensure");
         utils.ensure = utils.ensure || function (variable, evalFunc, defaultValue, message) {
                 var sure = variable;
