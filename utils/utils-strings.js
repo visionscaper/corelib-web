@@ -509,7 +509,7 @@
         utils._mustNOTexist("csvToArray");
         function csvToArray(string, separator) {
             if (!utils.string(string)) {
-                return null;
+                return [];
             }
             if(!utils.def(separator)) {
                 separator = ',';
