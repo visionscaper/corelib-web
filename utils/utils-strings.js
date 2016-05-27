@@ -564,6 +564,18 @@
         }
         utils.getFilenameFrom = utils.getFilenameFrom || getFilenameFrom;
 
+        utils._mustNOTexist("truncateString");
+        function truncateString(str, maxLength) {
+            if (!utils.string(str)) {
+                return str;
+            }
+
+            if(str.length > maxLength-3) {
+                return str.substring(0, maxLength-3) + '...';
+            }
+            return str;
+        }
+        utils.truncateString = utils.truncateString|| truncateString;
     };
 
 })();

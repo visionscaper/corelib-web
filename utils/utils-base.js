@@ -337,9 +337,14 @@
         };
 
         _mustNOTexist("set");
-        utils.set = utils.set || function (obj, path, value, objName) {
+        utils.set = utils.set || function (obj, path, value, objName, force) {
             var me = "utils::set";
             var success = false;
+
+            // objName can also be traded in for force
+            if(!utils.def(force) && utils.bool(objName)) {
+                force = objName;
+            }
 
             var describe = !utils.empty(objName);
 
@@ -369,6 +374,9 @@
 
                 if (utils.obj(targetObj)) {
                     if (idx < numProps - 1) {
+                        if (!utils.obj(targetObj[prop]) && force === true) {
+                            targetObj[prop] = {};
+                        }
                         targetObj = targetObj[prop];
                     } else {
                         success = true;
@@ -377,9 +385,9 @@
                 } else {
                     if (describe) {
                         log.warn(me, "[{0}] of object [{1}] is not an object, unable to set property [{2}]".fmt(
-                                pathTravelled,
-                                objName,
-                                path
+                            pathTravelled,
+                            objName,
+                            path
                         ));
                     }
 
@@ -415,7 +423,7 @@
         
         _mustNOTexist("parsableToNumber");
         utils.parsableToNumber = utils.parsableToNumber || function(number) {
-            return !isNaN(number);
+            return !isNaN(parseFloat(number));
         };
 
         _mustNOTexist("removeFrom");
