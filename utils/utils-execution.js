@@ -556,7 +556,7 @@
             }
 
             if (!utils.func(iterFunc)) {
-                log.error(me, "iterFunc is not a function : %@".fmt(utils.stringify(iterFunc)));
+                log.error(me, "iterFunc is not a function : {0}".fmt(utils.stringify(iterFunc)));
 
                 cbReady(success);
                 return;
@@ -620,7 +620,7 @@
             }
 
             if (!utils.func(iterFunc)) {
-                log.error(me, "iterFunc is not a function : %@".fmt(utils.stringify(iterFunc)));
+                log.error(me, "iterFunc is not a function : {0}".fmt(utils.stringify(iterFunc)));
 
                 cbReady(success);
                 return;
@@ -651,7 +651,7 @@
                     cbReady(success);
                 } else if (iter > numIter) {
                     log.error(me, "UNEXPECTED : Iteration callback func cbIterReady called too often!! " +
-                                  "Number of iterations = %@".fmt(iter));
+                                  "Number of iterations = {0}".fmt(iter));
                 }
             };
 
