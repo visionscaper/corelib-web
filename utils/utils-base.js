@@ -90,7 +90,10 @@
 
         _mustNOTexist("number");
         _mustExist("isNumber");
-        utils.number = utils.number || utils.isNumber;
+        utils.number = utils.number || function(n) {
+            return utils.isNumber(n) && !isNaN(n);
+        };
+
 
         _mustNOTexist("string");
         _mustExist("isString");
