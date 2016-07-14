@@ -185,7 +185,9 @@
             // Feedback
             if(!valid) {
                 if(utils.obj(options) && utils.has(options, 'default')) {
-                    if(utils.get(options, 'warn') !== false) {
+                    var warn = utils.get(options, 'warn');
+                    var __warn = utils.func(warn) ? warn : function() { return warn !== false; };
+                    if(__warn(value) !== false) {
                         result.warning = {
                             message: message
                         };
@@ -241,8 +243,7 @@
                 } else {
                     log.error(me, "Cannot validate. Parameter 'checks' must be object.", checks);
 
-                    //TODO : FS 24112015 : this does not seem to be correct
-                    if(!utils.def(consequence)) {
+                    if(utils.def(consequence)) {
                         log.error(consequence);
                     }
                 }
@@ -305,6 +306,62 @@
             }
         };
         utils.validate = utils.validate || validate;
+
+        utils._mustNOTexist("validateObj");
+        /**
+         * Validates an object, the same way .validate validates isolated values.
+         * @param {string} me
+         * @param {object} obj
+         * @param {string} name
+         * @param {object} checks
+         * @param {string} consequence
+         * @param {function} errCallback
+         */
+        var validateObj = function(me, obj, name, checks, consequence, errCallback) {
+            // Simply add a check to see if the given value is an object, but hooked to the same error handling.
+            var valid1 = _.validate(me, {
+                name : [obj, 'obj']
+            }, consequence, errCallback);
+            if(!valid1) return false;
+
+            // Check the object's properties
+            var finalChecks = {};
+            var invalidChecks = false;
+            for(var prop in checks) {
+                var args = checks[prop];
+                var isArray = utils.array(args);
+
+                // Lazy, single-parameter validation (string or function)
+                if(utils.string(args) || utils.func(args)) {
+                    finalChecks[prop] = [args];
+                    // Normal validation using array
+                } else if (isArray) {
+                    finalChecks[prop] = utils.clone(args);
+                    // Invalid validation
+                } else {
+                    invalidChecks = true;
+                    finalChecks[prop] = [false, "Invalid validation definition."]
+                }
+
+                // If checks were invalid, use args as value.
+                if(invalidChecks) {
+                    finalChecks[prop].unshift(args);
+                // Otherwise, add value to arguments.
+                } else {
+                    finalChecks[prop].unshift(obj[prop]);
+                }
+            }
+
+            // Adapt consequence to include the validated object's name.
+            var finalConsequence = "Invalid object for '{0}'.".fmt(name);
+            if(utils.def(consequence)) {
+                finalConsequence += " " + consequence;
+            }
+
+            // Run regular validation
+            return _.validate(me, finalChecks, finalConsequence, errCallback)
+        };
+        utils.validateObj = utils.validateObj || validateObj;
     };
 
 })();
