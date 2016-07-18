@@ -132,7 +132,7 @@
                     return utils.instanceof(checkClass, futureArg);
                 }
             } else {
-                return arg instanceof checkClass;
+                return utils.obj(checkClass) && arg instanceof checkClass;
             }
         };
 
