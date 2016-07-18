@@ -319,9 +319,9 @@
          */
         var validateObj = function(me, obj, name, checks, consequence, errCallback) {
             // Simply add a check to see if the given value is an object, but hooked to the same error handling.
-            var valid1 = _.validate(me, {
+            var valid1 = _.validate("utils-validation::validateObj", {
                 name : [obj, 'obj']
-            }, consequence, errCallback);
+            }, "Could not validate object.", errCallback);
             if(!valid1) return false;
 
             // Check the object's properties
