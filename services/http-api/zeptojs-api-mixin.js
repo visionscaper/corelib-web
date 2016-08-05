@@ -225,6 +225,11 @@
                         ZeptoJSAPIMixin.getResponseHeaders(xhr));
             };
 
+            req.complete = function(xhr, status) {
+                _l.debug(me, "Request completed ({0}) : {1} {2}".fmt(status, req.type, req.url));
+            };
+
+            _l.debug(me, "Sending request : {0} {1}".fmt(req.type, req.url));
             $.ajax(req);
 
             success = true;
