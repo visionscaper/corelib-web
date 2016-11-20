@@ -514,7 +514,7 @@
             if(!utils.def(separator)) {
                 separator = ',';
             }
-            var list    = utils.map(string.split(new RegExp('[/s]*'+separator+'[/s]*')), utils.trim);
+            var list    = utils.map(string.split(new RegExp('[\\s]*'+separator+'[\\s]*')), utils.trim);
 
             // Trim empty items from start and end
             var firstItem = list[0];
